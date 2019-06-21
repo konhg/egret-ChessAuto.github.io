@@ -1,1 +1,7 @@
-# egret-ChessAuto.github.io
+# egret-AutoChess
+
+玩自走棋有点入迷，寻思用白鹭也搞一个，结果发现有点难的
+
+实现了随机和购买升星
+
+真的是难，技术不够

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="ShopSkin" width="1136" height="640" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing">
+	<e:Rect width="100%" height="100%" horizontalCenter="0" verticalCenter="0" fillAlpha="0.3" strokeAlpha="0"/>
+	<e:List id="list" width="100%" height="364" anchorOffsetX="0" anchorOffsetY="0" verticalCenter="0" horizontalCenter="0" name="list">
+		<e:layout>
+			<e:HorizontalLayout gap="0"/>
+		</e:layout>
+	</e:List>
+	<e:Button id="closeBtn" label="关闭" width="150" height="100" right="0" bottom="0" name="closeBtn"/>
+	<e:Label id="probabilityShow" text="Lv10: ★1% ★1% ★1% ★1% ★1%" horizontalCenter="0" size="30" top="0" fontFamily="SimHei"/>
+	<e:Button id="refreshlist" label="刷新" right="0" top="0" height="100" name="closeBtn"/>
+</e:Skin>

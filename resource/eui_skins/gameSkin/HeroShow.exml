@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="HeroShow" width="227" height="364" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing">
+	<e:Rect width="90%" height="100%" fillColor="0x183ee2" horizontalCenter="0"/>
+	<e:Label id="heroName" text="千万别充钱" anchorOffsetY="0" height="209" anchorOffsetX="0" width="74" horizontalCenter="0" verticalCenter="-20" size="40" textAlign="center" fontFamily="SimHei" textColor="0xff0000" name="heroName" bold="true"/>
+	<e:Label id="occupation" text="职业" anchorOffsetX="0" anchorOffsetY="0" horizontalCenter="0.5" fontFamily="SimHei" textColor="0x28ff00" name="occupation" bottom="50"/>
+	<e:Label id="cost" text="消耗" anchorOffsetX="0" anchorOffsetY="0" horizontalCenter="0" fontFamily="SimHei" textColor="0x28FF00" name="cost" top="0"/>
+	<e:Label id="star" text="★★★" y="328" horizontalCenter="0" textColor="0xe5c757"/>
+	<e:Label id="haveNum" text="已拥有 8" y="220.5" size="25" fontFamily="SimSun" horizontalCenter="0"/>
+</e:Skin>
