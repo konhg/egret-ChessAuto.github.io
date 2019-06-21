@@ -16,6 +16,8 @@ var game;
             var _this = _super.call(this) || this;
             _this.model = model;
             _this.countDown = 15;
+            _this.isShowPrompt = [];
+            _this.isShowPromptbool = false; //显示日志的标记
             _this.skinName = "MainSkin";
             _this.countDown = game.Global.refreshShopTime;
             _this.timer = new egret.Timer(1000);
@@ -24,12 +26,38 @@ var game;
             _this.timer.start();
             return _this;
         }
+        /**
+         * @author konhg
+         * @description 显示操作日志，需要的地方调一下
+         * @param txt 显示的文本
+         */
+        GamePanel.prototype.showPrompt = function (txt) {
+            var _this = this;
+            if (txt != '') {
+                this.isShowPrompt.push(txt);
+            }
+            if (this.isShowPrompt.length > 0 && this.isShowPromptbool == false) {
+                this.isShowPromptbool = true;
+                // (<eui.Scroller>this['scroler']).viewport.scrollV = ((<eui.Scroller>this['scroler']).viewport.contentHeight - (<eui.Scroller>this['scroler']).viewport.height);
+                // if ((<eui.Scroller>this['scroler']).viewport.contentHeight > (<eui.Scroller>this['scroler']).viewport.height) {
+                // 	(<eui.Scroller>this['scroler']).scrollPolicyV = 'ON';
+                // }else{
+                // 	(<eui.Scroller>this['scroler']).scrollPolicyV = 'OFF';
+                // }
+                game.GameTools.showText(this['prompt'], this.isShowPrompt[0], 120, function () {
+                    _this.isShowPrompt.shift();
+                    _this.isShowPromptbool = false;
+                    _this.showPrompt('');
+                });
+            }
+        };
         GamePanel.prototype.timerFunc = function (e) {
             this['Countdown'].textFlow = new egret.HtmlTextParser().parser("<font color=0xff0000>\u5237\u65B0\u5012\u8BA1\u65F6:</font><font color=0x00ffff>" + this.countDown + "</font>");
             this.countDown--;
             if (this.countDown < 0) {
                 this.countDown = game.Global.refreshShopTime;
                 this.model.currentShopHeros = game.Global.getHeros(this.model.level);
+                game.GameTools.showTips("\u5546\u5E97\u5237\u65B0\u4E86\u65B0\u7684\u82F1\u96C4", 1);
                 this.removeShopPanel();
                 return;
             }
@@ -57,7 +85,7 @@ var game;
                 case "shopBtn":
                     instance.addEventListener(egret.TouchEvent.TOUCH_TAP, function () {
                         if (_this.model.currentShopHeros == null) {
-                            console.log('随机英雄失败');
+                            game.GameTools.showTips('随机英雄失败', 1, true);
                             return;
                         }
                         _this.showShopPanel();
@@ -169,12 +197,11 @@ var game;
                 }
             }
             if (!hinfo.ChessExample) {
-                console.log("%c\u8D2D\u4E70\u5931\u8D25,\u672A\u4E0A\u9635\u68CB\u5B50\u5DF2\u6EE1", "color:blue;font-size:30px");
+                game.GameTools.showTips('购买失败,未上阵棋子已满', 1, true);
                 return;
             }
-            console.log("%c\u8D2D\u4E70\u6210\u529F,\u52A0\u5165\u672A\u4E0A\u9635\u68CB\u5B50\u5217\u8868", "color:blue;font-size:30px");
-            console.table(this.model.notBattleHeros);
-            // this.addHeroToNotBattleGroup(hinfo);
+            this.showPrompt("\u8D2D\u4E70\u4E86" + hinfo.ChessExample.heroInfo.name + "\n");
+            game.GameTools.showTips('购买成功', 1);
             this.model.currentShopHeros[index] = null;
         };
         /**升星功能 */
@@ -229,6 +256,8 @@ var game;
                         isUplevel = true;
                         dn.ChessExample.heroStar = arr.length > 2 ? 3 : 2;
                         dn.ChessExample.refresh();
+                        game.GameTools.showTips("\u6210\u529F\u5C06" + dn.ChessExample.heroInfo.name + "\u5347\u81F3" + dn.ChessExample.heroStar + "\u661F", 1);
+                        this.showPrompt(dn.ChessExample.heroInfo.name + " \u5347\u81F3" + dn.ChessExample.heroStar + "\u661F\n");
                     }
                     else {
                         this.removeHeroToBattleGroupOrNotBattleGroup(dn.ChessExample.id, dn.targetX, dn.targetY);
@@ -243,6 +272,8 @@ var game;
                         isUplevel = true;
                         db.ChessExample.heroStar = arr.length > 2 ? 3 : 2;
                         db.ChessExample.refresh();
+                        game.GameTools.showTips("\u6210\u529F\u5C06" + db.ChessExample.heroInfo.name + "\u5347\u81F3" + db.ChessExample.heroStar + "\u661F", 1);
+                        this.showPrompt(db.ChessExample.heroInfo.name + " \u5347\u81F3" + db.ChessExample.heroStar + "\u661F\n");
                     }
                     else {
                         var db_1 = findInBattle(data.id);

@@ -37,11 +37,9 @@ var game;
                     }, this);
                     break;
                 case "list":
-                    // console.dir(this.model.currentShopHeros);
                     instance.itemRenderer = game.HeroShowItemRenderer;
                     instance.dataProvider = new eui.ArrayCollection(this.model.currentShopHeros);
                     instance.addEventListener(eui.ItemTapEvent.ITEM_TAP, function (e) {
-                        // console.log(`点击了${(<GameHeroVO>e.item).name},第${e.itemIndex}项`);
                         _this.addHero(e.itemIndex, e.itemRenderer.delArr);
                         e.currentTarget.dataProvider = new eui.ArrayCollection(_this.model.currentShopHeros);
                     }, this);

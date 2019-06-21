@@ -21,11 +21,9 @@ module game {
 					}, this);
 					break;
 				case "list":
-					// console.dir(this.model.currentShopHeros);
 					(<eui.List>instance).itemRenderer = HeroShowItemRenderer;
 					(<eui.List>instance).dataProvider = new eui.ArrayCollection(this.model.currentShopHeros);
 					(<eui.List>instance).addEventListener(eui.ItemTapEvent.ITEM_TAP, (e: eui.ItemTapEvent) => {
-						// console.log(`点击了${(<GameHeroVO>e.item).name},第${e.itemIndex}项`);
 						this.addHero(e.itemIndex, (<HeroShowItemRenderer>e.itemRenderer).delArr);
 						(<eui.List>e.currentTarget).dataProvider = new eui.ArrayCollection(this.model.currentShopHeros);
 					}, this);

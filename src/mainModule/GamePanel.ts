@@ -2,6 +2,7 @@ module game {
 	export class GamePanel extends eui.Component {
 		private timer: egret.Timer;
 		private countDown: number = 15;
+
 		public constructor(private model: GameModel) {
 			super();
 			this.skinName = "MainSkin";
@@ -14,12 +15,39 @@ module game {
 			this.model.currentShopHeros = Global.getHeros(this.model.level);
 			this.timer.start();
 		}
+		private isShowPrompt: string[] = [];
+		private isShowPromptbool: boolean = false;//显示日志的标记
+		/**
+		 * @author konhg
+		 * @description 显示操作日志，需要的地方调一下
+		 * @param txt 显示的文本
+		 */
+		private showPrompt(txt: string): void {
+			if (txt != '') {
+				this.isShowPrompt.push(txt);
+			}
+			if (this.isShowPrompt.length > 0 && this.isShowPromptbool == false) {
+				this.isShowPromptbool = true;
+				// (<eui.Scroller>this['scroler']).viewport.scrollV = ((<eui.Scroller>this['scroler']).viewport.contentHeight - (<eui.Scroller>this['scroler']).viewport.height);
+				// if ((<eui.Scroller>this['scroler']).viewport.contentHeight > (<eui.Scroller>this['scroler']).viewport.height) {
+				// 	(<eui.Scroller>this['scroler']).scrollPolicyV = 'ON';
+				// }else{
+				// 	(<eui.Scroller>this['scroler']).scrollPolicyV = 'OFF';
+				// }
+				GameTools.showText((<eui.Label>this['prompt']), this.isShowPrompt[0], 120, () => {
+					this.isShowPrompt.shift();
+					this.isShowPromptbool = false;
+					this.showPrompt('');
+				})
+			}
+		}
 		private timerFunc(e: egret.TimerEvent): void {
 			(<eui.Label>this['Countdown']).textFlow = new egret.HtmlTextParser().parser(`<font color=0xff0000>刷新倒计时:</font><font color=0x00ffff>${this.countDown}</font>`);
 			this.countDown--;
 			if (this.countDown < 0) {
 				this.countDown = Global.refreshShopTime;
 				this.model.currentShopHeros = Global.getHeros(this.model.level);
+				GameTools.showTips(`商店刷新了新的英雄`, 1);
 				this.removeShopPanel();
 				return;
 			}
@@ -48,7 +76,7 @@ module game {
 				case "shopBtn":
 					(<eui.Button>instance).addEventListener(egret.TouchEvent.TOUCH_TAP, () => {
 						if (this.model.currentShopHeros == null) {
-							console.log('随机英雄失败');
+							GameTools.showTips('随机英雄失败', 1, true);
 							return;
 						}
 						this.showShopPanel();
@@ -161,12 +189,11 @@ module game {
 				}
 			}
 			if (!hinfo.ChessExample) {
-				console.log(`%c购买失败,未上阵棋子已满`, `color:blue;font-size:30px`);
+				GameTools.showTips('购买失败,未上阵棋子已满', 1, true);
 				return;
 			}
-			console.log(`%c购买成功,加入未上阵棋子列表`, `color:blue;font-size:30px`);
-			console.table(this.model.notBattleHeros);
-			// this.addHeroToNotBattleGroup(hinfo);
+			this.showPrompt(`购买了${hinfo.ChessExample.heroInfo.name}\n`);
+			GameTools.showTips('购买成功', 1);
 			this.model.currentShopHeros[index] = null;
 		}
 		/**升星功能 */
@@ -221,6 +248,8 @@ module game {
 						isUplevel = true;
 						dn.ChessExample.heroStar = arr.length > 2 ? 3 : 2;
 						dn.ChessExample.refresh();
+						GameTools.showTips(`成功将${dn.ChessExample.heroInfo.name}升至${dn.ChessExample.heroStar}星`, 1);
+						this.showPrompt(`${dn.ChessExample.heroInfo.name} 升至${dn.ChessExample.heroStar}星\n`);
 					} else {
 						this.removeHeroToBattleGroupOrNotBattleGroup(dn.ChessExample.id, dn.targetX, dn.targetY);
 					}
@@ -233,6 +262,8 @@ module game {
 						isUplevel = true;
 						db.ChessExample.heroStar = arr.length > 2 ? 3 : 2;
 						db.ChessExample.refresh();
+						GameTools.showTips(`成功将${db.ChessExample.heroInfo.name}升至${db.ChessExample.heroStar}星`, 1);
+						this.showPrompt(`${db.ChessExample.heroInfo.name} 升至${db.ChessExample.heroStar}星\n`);
 					} else {
 						let db: BattleHeroVO = findInBattle(data.id);
 						if (db) {
