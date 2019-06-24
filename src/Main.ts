@@ -30,8 +30,12 @@ module game {
     export class Global {
         /**显示层级 */
         static gameController: eui.UILayer;
-        /**商店刷新时间间隔 */
-        static readonly refreshShopTime = 15;
+        /**游戏移动时间 */
+        static readonly gameMoveTime = 90;
+        /**游戏移动等待时间 */
+        static readonly gameMoveWaitTime = 3;
+        /**游戏战斗时间 */
+        static readonly gameBattleTime = 60;
         /**棋子的宽 */
         static readonly chessWidth: number = 62.5;
         /**棋子的高 */
@@ -131,7 +135,7 @@ module game {
                 if (n >= 0 && n <= randomRatio[0]) {
                     //一费
                     l = Math.floor(Math.random() * Global.heros[0].length - 1);
-                    lucky_hero = Global.heros[0][Math.abs(1)];
+                    lucky_hero = Global.heros[0][Math.abs(l)];
                 } else if (n > randomRatio[0] && n <= randomRatio[1]) {
                     //二费
                     l = Math.floor(Math.random() * Global.heros[1].length - 1);

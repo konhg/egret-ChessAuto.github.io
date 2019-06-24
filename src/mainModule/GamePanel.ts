@@ -1,17 +1,17 @@
 module game {
 	export class GamePanel extends eui.Component {
 		private timer: egret.Timer;
-		private countDown: number = 15;
-
+		private countDown: number = 0;
+		private countDownText: string = '';
 		public constructor(private model: GameModel) {
 			super();
 			this.skinName = "MainSkin";
-			this.countDown = Global.refreshShopTime;
+			// this.countDown = Global.gameMoveTime;
 
 			this.timer = new egret.Timer(1000);
-
+			this.countDownText = "游戏即将开始:"
 			this.timer.addEventListener(egret.TimerEvent.TIMER, this.timerFunc, this);
-
+			this.model.stateInNow = GAMESTATE.NONE;
 			this.model.currentShopHeros = Global.getHeros(this.model.level);
 			this.timer.start();
 		}
@@ -42,17 +42,54 @@ module game {
 			}
 		}
 		private timerFunc(e: egret.TimerEvent): void {
-			(<eui.Label>this['Countdown']).textFlow = new egret.HtmlTextParser().parser(`<font color=0xff0000>刷新倒计时:</font><font color=0x00ffff>${this.countDown}</font>`);
+			(<eui.Label>this['Countdown']).textFlow = new egret.HtmlTextParser().parser(`<font color=0xff0000>${this.countDownText}</font><font color=0x00ffff>${this.countDown}</font>`);
 			this.countDown--;
+			this.refreshBattleArrayNumber();
 			if (this.countDown < 0) {
-				this.countDown = Global.refreshShopTime;
-				this.model.currentShopHeros = Global.getHeros(this.model.level);
-				GameTools.showTips(`商店刷新了新的英雄`, 1);
-				this.removeShopPanel();
-				return;
+				switch (this.model.stateInNow) {
+					case GAMESTATE.NONE:
+						return this.changeState(GAMESTATE.MOVETIME);
+					case GAMESTATE.MOVETIME:
+						return this.changeState(GAMESTATE.MOVEWAIT);
+					case GAMESTATE.MOVEWAIT:
+						return this.changeState(GAMESTATE.BATTLETIME);
+					case GAMESTATE.BATTLETIME:
+						return this.changeState(GAMESTATE.MOVETIME);
+				}
+
 			}
+		}
+		/**切换当前状态 */
+		private changeState(state: GAMESTATE): void {
+			switch (state) {
+				case GAMESTATE.NONE:
+				/**理论上只有开始游戏时会进入这个状态，不需要手动切到这个状态 */
+				case GAMESTATE.MOVETIME:
+					this.countDown = Global.gameMoveTime;
+					this.model.stateInNow = GAMESTATE.MOVETIME;
+					this.countDownText = "准备阶段:";
+					this.model.currentShopHeros = Global.getHeros(this.model.level);
+					GameTools.showTips(`商店刷新了新的英雄`, 1);
+					this.model.setAllBattleChessTouchFalse(true);
+					this.removeShopPanel();
+					return;
+				case GAMESTATE.MOVEWAIT:
+					this.countDown = Global.gameMoveWaitTime;
+					this.model.stateInNow = GAMESTATE.MOVEWAIT;
+					this.countDownText = "锁定阶段:";
+					this.model.setAllBattleChessTouchFalse(false);
+					return;
+				case GAMESTATE.BATTLETIME:
+					this.countDown = Global.gameBattleTime;
+					this.model.stateInNow = GAMESTATE.BATTLETIME;
+					this.countDownText = "战斗阶段:";
+					return;
 
-
+			}
+		}
+		/**刷新上阵人数 */
+		private refreshBattleArrayNumber(): void {
+			(<eui.Label>this['BattleArray']).textFlow = new egret.HtmlTextParser().parser(`<font color=0xff0000>已上阵人数:</font><font color=0x00ff00>${this.model.getBattleChessNumber()}</font><font color=0xff0000>/${this.model.population}</font>`)
 		}
 		/**移除商店页面 */
 		private removeShopPanel(): void {
@@ -172,6 +209,7 @@ module game {
 		 * 购买成功失败的判断方法
 		 */
 		private addHero(index: number, delArr: uplevelObj[]): void {
+
 			if (delArr.length > 0) {
 				this.model.currentShopHeros[index] = null;
 				this.upDataChess(delArr);
@@ -198,52 +236,24 @@ module game {
 		}
 		/**升星功能 */
 		private upDataChess(arr: uplevelObj[]): void {
-
 			let data: uplevelObj = {};
-			/**查询是否在已上阵列表 */
-			let findInBattle: Function = (id: number): BattleHeroVO => {
-				let dx: BattleHeroVO = null;
-				for (let i = 0; i < this.model.battleHeros.length; i++) {
-					for (let j = 0; j < this.model.battleHeros[i].length; j++) {
-						if (!this.model.battleHeros[i][j] || null == this.model.battleHeros[i][j] || undefined == this.model.battleHeros[i][j]) {
-							continue;
-						}
-						dx = this.model.battleHeros[i][j];
-						if (dx.ChessExample.id == id) {
-							return dx;
-						}
-					}
-				}
-				return null;
-			}
-			/**查询是否在未上阵列表 */
-			let findInNotBattle: Function = (id: number): BattleHeroVO => {
-				for (let j = 0; j < this.model.notBattleHeros.length; j++) {
-					let dy: BattleHeroVO = null;
-					if (!this.model.notBattleHeros[j] || null == this.model.notBattleHeros[j] || undefined == this.model.notBattleHeros[j]) {
-						continue;
-					}
-					dy = this.model.notBattleHeros[j];
-					if (dy.ChessExample.id == id) {
-						return dy;
-					}
-				}
-				return null;
-			}
 			let isUplevel: boolean = false;/**是否已升星标记 */
 			let dh: BattleHeroVO = null;
 			for (let c = 0; c < arr.length; c++) {
 				data = arr[c];
-				if (findInBattle(data.id) != null && isUplevel == false) {
-					dh = findInBattle(data.id);/**优先已上阵列表 */
+				dh = this.model.findChessInBattleHerosById(data.id)
+				if (dh != null && isUplevel == false) {
+					/**优先已上阵列表 */
 					break;
+				} else {
+					dh = null;
 				}
 			}
 			/**如果在已上阵列表内，优先升级以上阵列表的棋子 */
 			if (dh == null) {
 				for (let c = 0; c < arr.length; c++) {
 					data = arr[c];
-					let dn: BattleHeroVO = findInNotBattle(data.id);
+					let dn: BattleHeroVO = this.model.findChessInNotBattleHerosById(data.id);
 					if (dn != null && isUplevel == false) {
 						isUplevel = true;
 						dn.ChessExample.heroStar = arr.length > 2 ? 3 : 2;
@@ -251,13 +261,14 @@ module game {
 						GameTools.showTips(`成功将${dn.ChessExample.heroInfo.name}升至${dn.ChessExample.heroStar}星`, 1);
 						this.showPrompt(`${dn.ChessExample.heroInfo.name} 升至${dn.ChessExample.heroStar}星\n`);
 					} else {
-						this.removeHeroToBattleGroupOrNotBattleGroup(dn.ChessExample.id, dn.targetX, dn.targetY);
+						dn.ChessExample.removeThis();
+						this.model.notBattleHeros[dn.targetX] = null;
 					}
 				}
 			} else {
 				for (let c = 0; c < arr.length; c++) {
 					data = arr[c];
-					let db: BattleHeroVO = findInBattle(data.id);
+					let db: BattleHeroVO = this.model.findChessInBattleHerosById(data.id);
 					if (db != null && isUplevel == false) {
 						isUplevel = true;
 						db.ChessExample.heroStar = arr.length > 2 ? 3 : 2;
@@ -265,14 +276,14 @@ module game {
 						GameTools.showTips(`成功将${db.ChessExample.heroInfo.name}升至${db.ChessExample.heroStar}星`, 1);
 						this.showPrompt(`${db.ChessExample.heroInfo.name} 升至${db.ChessExample.heroStar}星\n`);
 					} else {
-						let db: BattleHeroVO = findInBattle(data.id);
-						if (db) {
-							this.removeHeroToBattleGroupOrNotBattleGroup(db.ChessExample.id, db.targetX, db.targetY);
+						let da: BattleHeroVO = this.model.findChessInNotBattleHerosById(data.id)
+						if (da != null) {
+							da.ChessExample.removeThis();
+							this.model.notBattleHeros[da.targetX] = null;
 						} else {
-							let dj: BattleHeroVO = findInNotBattle(data.id);
-							this.removeHeroToBattleGroupOrNotBattleGroup(dj.ChessExample.id, dj.targetX, dj.targetY);
+							db.ChessExample.removeThis();
+							this.model.battleHeros[db.targetX][db.targetY] = null;
 						}
-
 					}
 				}
 			}
@@ -304,20 +315,6 @@ module game {
 			chess.x = hX;
 			chess.y = hY;
 			this.model.moveBattleHerosToNotBattleHeros(id, targetX, targetY);
-		}
-		/**从界面上移除一个棋子
-		 * @param id 生成棋子时的唯一id
-		 */
-		private removeHeroToBattleGroupOrNotBattleGroup(id: number | string, targetX, targetY): void {
-			let i: string = String(id);
-			if ((<eui.Group>this['notbattlegroup']).getChildByName(i) != null) {
-				this.model.notBattleHeros[targetX] = null;
-				(<eui.Group>this['notbattlegroup']).removeChild((<eui.Group>this['notbattlegroup']).getChildByName(i));
-			}
-			if ((<eui.Group>this['battlegroup']).getChildByName(i) != null) {
-				this.model.battleHeros[targetX][targetY] = null;
-				(<eui.Group>this['battlegroup']).removeChild((<eui.Group>this['battlegroup']).getChildByName(i));
-			}
 		}
 	}
 

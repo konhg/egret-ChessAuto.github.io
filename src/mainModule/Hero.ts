@@ -5,6 +5,8 @@ module game {
 	 * @description 实例化单个棋子，继承eui.Panel，可拖拽
 	 * @param heroID 棋子数据, 唯一
 	 * @param heroStar 棋子的星级, 不唯一
+	 * @param moveChessToBattleGroup 拖拽到战斗列表方法
+	 * @param moveChessToNotBattleGroup 拖拽到未战斗列表方法
 	 */
 	export class Hero extends eui.Panel {
 		private pointX: number;
@@ -26,6 +28,9 @@ module game {
 					(<eui.Label>instance).text = this.heroStar + '';
 					break;
 			}
+		}
+		public settouch(bool: boolean): void {
+			this.touchChildren = bool;
 		}
 		protected onTouchBegin(event: egret.TouchEvent): void {
 			super.onTouchBegin(event);
@@ -53,12 +58,19 @@ module game {
 			let notbattleGroupY: number = notBattleGroup.y;
 			let notbattleGroupWidth: number = notBattleGroup.width;
 			let notbattleGroupHeight: number = notBattleGroup.height;
+
 			if (event.stageX >= battleGroupX && event.stageX <= (battleGroupX + battleGroupWidth) && event.stageY >= battleGroupY && event.stageY <= (battleGroupY + battleGroupHeight)) {
 				//扔到已上阵列表,移动格子
 				let targetPoint: egret.Point = battleGroup.globalToLocal(event.stageX, event.stageY);
 				let targetX = Math.abs(Math.floor(targetPoint.x / Global.chessWidth));
 				let targetY = Math.abs(Math.floor(targetPoint.y / Global.chessHeight));
 				if (targetY > 3 && (this.model.battleHeros[targetX][targetY] == null || this.model.battleHeros[targetX][targetY] == undefined)) {
+					if (this.model.stateInNow != GAMESTATE.MOVETIME || (this.model.findChessInBattleHerosById(this.id) == null && this.model.getBattleChessNumber() >= this.model.population)) {
+						//还原坐标
+						this.x = this.pointX;
+						this.y = this.pointY;
+						return;
+					}
 					let hX = targetX * Global.chessWidth;
 					let hY = targetY * Global.chessHeight;
 					this.moveChessToBattleGroup(this.id, targetX, targetY, hX, hY, this);
@@ -66,6 +78,7 @@ module game {
 				}
 			} else if (event.stageX >= notbattleGroupX && event.stageX <= (notbattleGroupX + notbattleGroupWidth) && event.stageY >= notbattleGroupY && event.stageY <= (notbattleGroupY + notbattleGroupHeight)) {
 				//扔到未上阵列表，移动格子
+
 				let targetPoint: egret.Point = notBattleGroup.globalToLocal(event.stageX, event.stageY);
 				let targetX = Math.abs(Math.floor(targetPoint.x / Global.chessWidth));
 				if (this.model.notBattleHeros[targetX] == null || this.model.notBattleHeros[targetX] == undefined) {
@@ -77,6 +90,10 @@ module game {
 			//还原坐标
 			this.x = this.pointX;
 			this.y = this.pointY;
+		}
+		/**移除自己 */
+		public removeThis(): void {
+			this.close();
 		}
 	}
 }

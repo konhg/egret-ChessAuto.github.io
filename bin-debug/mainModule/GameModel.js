@@ -8,7 +8,9 @@ var game;
             /**当前商店的棋子数组★ */
             this.currentShopHeros = [];
             /**当前棋盘等级 */
-            this.level = 10;
+            this.level = 1;
+            /**允许上阵的最大人数 */
+            this.population = 10;
             /**未上阵棋子列表 */
             this.notBattleHeros = [];
             /**已上阵棋子列表 */
@@ -117,6 +119,64 @@ var game;
                 ],
             ];
         }
+        /**获取以上阵人数 */
+        GameModel.prototype.getBattleChessNumber = function () {
+            var num = 0;
+            for (var i = 0; i < this.battleHeros.length; i++) {
+                for (var j = 4; j < this.battleHeros[i].length; j++) {
+                    if (!this.battleHeros[i][j] || null == this.battleHeros[i][j] || undefined == this.battleHeros[i][j]) {
+                        continue;
+                    }
+                    num++;
+                }
+            }
+            return num;
+        };
+        /**设置所有的战斗棋子的选中状态 */
+        GameModel.prototype.setAllBattleChessTouchFalse = function (bool) {
+            var dx = null;
+            for (var i = 0; i < this.battleHeros.length; i++) {
+                for (var j = 4; j < this.battleHeros[i].length; j++) {
+                    if (!this.battleHeros[i][j] || null == this.battleHeros[i][j] || undefined == this.battleHeros[i][j]) {
+                        continue;
+                    }
+                    dx = this.battleHeros[i][j];
+                    dx.ChessExample.settouch(bool);
+                }
+            }
+        };
+        /**查询棋子是否在战斗列表 */
+        GameModel.prototype.findChessInBattleHerosById = function (id) {
+            var dx = null;
+            for (var i = 0; i < this.battleHeros.length; i++) {
+                for (var j = 4; j < this.battleHeros[i].length; j++) {
+                    if (!this.battleHeros[i][j] || null == this.battleHeros[i][j] || undefined == this.battleHeros[i][j]) {
+                        continue;
+                    }
+                    dx = this.battleHeros[i][j];
+                    console.log(i, j, dx.ChessExample.id);
+                    if (dx.ChessExample.id == id) {
+                        return dx;
+                    }
+                }
+            }
+            return null;
+        };
+        /**查询棋子是否在未战斗列表 */
+        GameModel.prototype.findChessInNotBattleHerosById = function (id) {
+            for (var j = 0; j < this.notBattleHeros.length; j++) {
+                var dy = null;
+                if (!this.notBattleHeros[j] || null == this.notBattleHeros[j] || undefined == this.notBattleHeros[j]) {
+                    continue;
+                }
+                dy = this.notBattleHeros[j];
+                console.log(j, dy.ChessExample.id);
+                if (dy.ChessExample.id == id) {
+                    return dy;
+                }
+            }
+            return null;
+        };
         /**把棋子移动到已战斗棋子列表 */
         GameModel.prototype.moveNotBattleHerosToBattleHeros = function (id, targetX, targetY) {
             var arrN = this.notBattleHeros.slice(); //拷贝原始数组
@@ -139,7 +199,7 @@ var game;
             var arrB = this.battleHeros.slice(); //拷贝原始数组
             var b;
             for (var i = 0; i < arrB.length; i++) {
-                for (var j = 0; j < arrB[i].length; j++) {
+                for (var j = 4; j < arrB[i].length; j++) {
                     b = arrB[i][j];
                     if (!b || b == undefined || b == null) {
                         continue;
@@ -163,7 +223,7 @@ var game;
         GameModel.prototype.moveBattleHerosToNotBattleHeros = function (id, targetX, targetY) {
             var arr = this.battleHeros.slice();
             for (var i = 0; i < arr.length; i++) {
-                for (var j = 0; j < arr[i].length; j++) {
+                for (var j = 4; j < arr[i].length; j++) {
                     if (!arr[i][j] || arr[i][j] == undefined || arr[i][j] == null) {
                         continue;
                     }

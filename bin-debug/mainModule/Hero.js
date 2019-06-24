@@ -16,6 +16,8 @@ var game;
      * @description 实例化单个棋子，继承eui.Panel，可拖拽
      * @param heroID 棋子数据, 唯一
      * @param heroStar 棋子的星级, 不唯一
+     * @param moveChessToBattleGroup 拖拽到战斗列表方法
+     * @param moveChessToNotBattleGroup 拖拽到未战斗列表方法
      */
     var Hero = (function (_super) {
         __extends(Hero, _super);
@@ -43,6 +45,9 @@ var game;
                     instance.text = this.heroStar + '';
                     break;
             }
+        };
+        Hero.prototype.settouch = function (bool) {
+            this.touchChildren = bool;
         };
         Hero.prototype.onTouchBegin = function (event) {
             _super.prototype.onTouchBegin.call(this, event);
@@ -75,6 +80,12 @@ var game;
                 var targetX = Math.abs(Math.floor(targetPoint.x / game.Global.chessWidth));
                 var targetY = Math.abs(Math.floor(targetPoint.y / game.Global.chessHeight));
                 if (targetY > 3 && (this.model.battleHeros[targetX][targetY] == null || this.model.battleHeros[targetX][targetY] == undefined)) {
+                    if (this.model.stateInNow != 0 /* MOVETIME */ || (this.model.findChessInBattleHerosById(this.id) == null && this.model.getBattleChessNumber() >= this.model.population)) {
+                        //还原坐标
+                        this.x = this.pointX;
+                        this.y = this.pointY;
+                        return;
+                    }
                     var hX = targetX * game.Global.chessWidth;
                     var hY = targetY * game.Global.chessHeight;
                     this.moveChessToBattleGroup(this.id, targetX, targetY, hX, hY, this);
@@ -94,6 +105,10 @@ var game;
             //还原坐标
             this.x = this.pointX;
             this.y = this.pointY;
+        };
+        /**移除自己 */
+        Hero.prototype.removeThis = function () {
+            this.close();
         };
         return Hero;
     }(eui.Panel));

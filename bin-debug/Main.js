@@ -76,8 +76,12 @@ var game;
     var Global = (function () {
         function Global() {
         }
-        /**商店刷新时间间隔 */
-        Global.refreshShopTime = 15;
+        /**游戏移动时间 */
+        Global.gameMoveTime = 90;
+        /**游戏移动等待时间 */
+        Global.gameMoveWaitTime = 3;
+        /**游戏战斗时间 */
+        Global.gameBattleTime = 60;
         /**棋子的宽 */
         Global.chessWidth = 62.5;
         /**棋子的高 */
@@ -176,7 +180,7 @@ var game;
                 if (n >= 0 && n <= randomRatio[0]) {
                     //一费
                     l = Math.floor(Math.random() * Global.heros[0].length - 1);
-                    lucky_hero = Global.heros[0][Math.abs(1)];
+                    lucky_hero = Global.heros[0][Math.abs(l)];
                 }
                 else if (n > randomRatio[0] && n <= randomRatio[1]) {
                     //二费

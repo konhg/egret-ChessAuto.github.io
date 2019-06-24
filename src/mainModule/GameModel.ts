@@ -1,9 +1,25 @@
 module game {
+	export const enum GAMESTATE {
+		/**无状态 */
+		NONE = -1,
+		/**移动时间 */
+		MOVETIME = 0,
+		/**移动等待时间 */
+		MOVEWAIT = 1,
+		/**战斗时间 */
+		BATTLETIME = 2,
+		/** */
+
+	}
 	export class GameModel {
+		/**当前状态 */
+		public stateInNow: number;
 		/**当前商店的棋子数组★ */
 		public currentShopHeros: GameHeroVO[] = [];
 		/**当前棋盘等级 */
-		public level: number = 10;
+		public level: number = 1;
+		/**允许上阵的最大人数 */
+		public population: number = 10;
 		/**未上阵棋子列表 */
 		public notBattleHeros: BattleHeroVO[] = [];
 		/**已上阵棋子列表 */
@@ -113,6 +129,64 @@ module game {
 				],
 			];
 		}
+		/**获取以上阵人数 */
+		public getBattleChessNumber(): number {
+			let num: number = 0;
+			for (let i = 0; i < this.battleHeros.length; i++) {
+				for (let j = 4; j < this.battleHeros[i].length; j++) {
+					if (!this.battleHeros[i][j] || null == this.battleHeros[i][j] || undefined == this.battleHeros[i][j]) {
+						continue;
+					}
+					num++;
+				}
+			}
+			return num;
+		}
+		/**设置所有的战斗棋子的选中状态 */
+		public setAllBattleChessTouchFalse(bool: boolean): void {
+			let dx: BattleHeroVO = null;
+			for (let i = 0; i < this.battleHeros.length; i++) {
+				for (let j = 4; j < this.battleHeros[i].length; j++) {
+					if (!this.battleHeros[i][j] || null == this.battleHeros[i][j] || undefined == this.battleHeros[i][j]) {
+						continue;
+					}
+					dx = this.battleHeros[i][j];
+					dx.ChessExample.settouch(bool);
+				}
+			}
+		}
+		/**查询棋子是否在战斗列表 */
+		public findChessInBattleHerosById(id: number): BattleHeroVO {
+			let dx: BattleHeroVO = null;
+			for (let i = 0; i < this.battleHeros.length; i++) {
+				for (let j = 4; j < this.battleHeros[i].length; j++) {
+					if (!this.battleHeros[i][j] || null == this.battleHeros[i][j] || undefined == this.battleHeros[i][j]) {
+						continue;
+					}
+					dx = this.battleHeros[i][j];
+					console.log(i, j, dx.ChessExample.id);
+					if (dx.ChessExample.id == id) {
+						return dx;
+					}
+				}
+			}
+			return null;
+		}
+		/**查询棋子是否在未战斗列表 */
+		public findChessInNotBattleHerosById(id: number): BattleHeroVO {
+			for (let j = 0; j < this.notBattleHeros.length; j++) {
+				let dy: BattleHeroVO = null;
+				if (!this.notBattleHeros[j] || null == this.notBattleHeros[j] || undefined == this.notBattleHeros[j]) {
+					continue;
+				}
+				dy = this.notBattleHeros[j];
+				console.log(j, dy.ChessExample.id);
+				if (dy.ChessExample.id == id) {
+					return dy;
+				}
+			}
+			return null;
+		}
 		/**把棋子移动到已战斗棋子列表 */
 		public moveNotBattleHerosToBattleHeros(id: number, targetX: number, targetY: number): void {
 			let arrN: BattleHeroVO[] = [...this.notBattleHeros];//拷贝原始数组
@@ -135,7 +209,7 @@ module game {
 			let arrB: BattleHeroVO[][] = [...this.battleHeros];//拷贝原始数组
 			let b: BattleHeroVO;
 			for (let i = 0; i < arrB.length; i++) {
-				for (let j = 0; j < arrB[i].length; j++) {
+				for (let j = 4; j < arrB[i].length; j++) {
 					b = arrB[i][j];
 					if (!b || b == undefined || b == null) {
 						continue;
@@ -159,7 +233,7 @@ module game {
 		public moveBattleHerosToNotBattleHeros(id: number, targetX: number, targetY: number): void {
 			let arr: BattleHeroVO[][] = [...this.battleHeros];
 			for (let i = 0; i < arr.length; i++) {
-				for (let j = 0; j < arr[i].length; j++) {
+				for (let j = 4; j < arr[i].length; j++) {
 					if (!arr[i][j] || arr[i][j] == undefined || arr[i][j] == null) {
 						continue;
 					}

@@ -15,13 +15,16 @@ var game;
         function GamePanel(model) {
             var _this = _super.call(this) || this;
             _this.model = model;
-            _this.countDown = 15;
+            _this.countDown = 0;
+            _this.countDownText = '';
             _this.isShowPrompt = [];
             _this.isShowPromptbool = false; //显示日志的标记
             _this.skinName = "MainSkin";
-            _this.countDown = game.Global.refreshShopTime;
+            // this.countDown = Global.gameMoveTime;
             _this.timer = new egret.Timer(1000);
+            _this.countDownText = "游戏即将开始:";
             _this.timer.addEventListener(egret.TimerEvent.TIMER, _this.timerFunc, _this);
+            _this.model.stateInNow = -1 /* NONE */;
             _this.model.currentShopHeros = game.Global.getHeros(_this.model.level);
             _this.timer.start();
             return _this;
@@ -52,15 +55,52 @@ var game;
             }
         };
         GamePanel.prototype.timerFunc = function (e) {
-            this['Countdown'].textFlow = new egret.HtmlTextParser().parser("<font color=0xff0000>\u5237\u65B0\u5012\u8BA1\u65F6:</font><font color=0x00ffff>" + this.countDown + "</font>");
+            this['Countdown'].textFlow = new egret.HtmlTextParser().parser("<font color=0xff0000>" + this.countDownText + "</font><font color=0x00ffff>" + this.countDown + "</font>");
             this.countDown--;
+            this.refreshBattleArrayNumber();
             if (this.countDown < 0) {
-                this.countDown = game.Global.refreshShopTime;
-                this.model.currentShopHeros = game.Global.getHeros(this.model.level);
-                game.GameTools.showTips("\u5546\u5E97\u5237\u65B0\u4E86\u65B0\u7684\u82F1\u96C4", 1);
-                this.removeShopPanel();
-                return;
+                switch (this.model.stateInNow) {
+                    case -1 /* NONE */:
+                        return this.changeState(0 /* MOVETIME */);
+                    case 0 /* MOVETIME */:
+                        return this.changeState(1 /* MOVEWAIT */);
+                    case 1 /* MOVEWAIT */:
+                        return this.changeState(2 /* BATTLETIME */);
+                    case 2 /* BATTLETIME */:
+                        return this.changeState(0 /* MOVETIME */);
+                }
             }
+        };
+        /**切换当前状态 */
+        GamePanel.prototype.changeState = function (state) {
+            switch (state) {
+                case -1 /* NONE */:
+                /**理论上只有开始游戏时会进入这个状态，不需要手动切到这个状态 */
+                case 0 /* MOVETIME */:
+                    this.countDown = game.Global.gameMoveTime;
+                    this.model.stateInNow = 0 /* MOVETIME */;
+                    this.countDownText = "准备阶段:";
+                    this.model.currentShopHeros = game.Global.getHeros(this.model.level);
+                    game.GameTools.showTips("\u5546\u5E97\u5237\u65B0\u4E86\u65B0\u7684\u82F1\u96C4", 1);
+                    this.model.setAllBattleChessTouchFalse(true);
+                    this.removeShopPanel();
+                    return;
+                case 1 /* MOVEWAIT */:
+                    this.countDown = game.Global.gameMoveWaitTime;
+                    this.model.stateInNow = 1 /* MOVEWAIT */;
+                    this.countDownText = "锁定阶段:";
+                    this.model.setAllBattleChessTouchFalse(false);
+                    return;
+                case 2 /* BATTLETIME */:
+                    this.countDown = game.Global.gameBattleTime;
+                    this.model.stateInNow = 2 /* BATTLETIME */;
+                    this.countDownText = "战斗阶段:";
+                    return;
+            }
+        };
+        /**刷新上阵人数 */
+        GamePanel.prototype.refreshBattleArrayNumber = function () {
+            this['BattleArray'].textFlow = new egret.HtmlTextParser().parser("<font color=0xff0000>\u5DF2\u4E0A\u9635\u4EBA\u6570:</font><font color=0x00ff00>" + this.model.getBattleChessNumber() + "</font><font color=0xff0000>/" + this.model.population + "</font>");
         };
         /**移除商店页面 */
         GamePanel.prototype.removeShopPanel = function () {
@@ -206,52 +246,25 @@ var game;
         };
         /**升星功能 */
         GamePanel.prototype.upDataChess = function (arr) {
-            var _this = this;
             var data = {};
-            /**查询是否在已上阵列表 */
-            var findInBattle = function (id) {
-                var dx = null;
-                for (var i = 0; i < _this.model.battleHeros.length; i++) {
-                    for (var j = 0; j < _this.model.battleHeros[i].length; j++) {
-                        if (!_this.model.battleHeros[i][j] || null == _this.model.battleHeros[i][j] || undefined == _this.model.battleHeros[i][j]) {
-                            continue;
-                        }
-                        dx = _this.model.battleHeros[i][j];
-                        if (dx.ChessExample.id == id) {
-                            return dx;
-                        }
-                    }
-                }
-                return null;
-            };
-            /**查询是否在未上阵列表 */
-            var findInNotBattle = function (id) {
-                for (var j = 0; j < _this.model.notBattleHeros.length; j++) {
-                    var dy = null;
-                    if (!_this.model.notBattleHeros[j] || null == _this.model.notBattleHeros[j] || undefined == _this.model.notBattleHeros[j]) {
-                        continue;
-                    }
-                    dy = _this.model.notBattleHeros[j];
-                    if (dy.ChessExample.id == id) {
-                        return dy;
-                    }
-                }
-                return null;
-            };
             var isUplevel = false; /**是否已升星标记 */
             var dh = null;
             for (var c = 0; c < arr.length; c++) {
                 data = arr[c];
-                if (findInBattle(data.id) != null && isUplevel == false) {
-                    dh = findInBattle(data.id); /**优先已上阵列表 */
+                dh = this.model.findChessInBattleHerosById(data.id);
+                if (dh != null && isUplevel == false) {
+                    /**优先已上阵列表 */
                     break;
+                }
+                else {
+                    dh = null;
                 }
             }
             /**如果在已上阵列表内，优先升级以上阵列表的棋子 */
             if (dh == null) {
                 for (var c = 0; c < arr.length; c++) {
                     data = arr[c];
-                    var dn = findInNotBattle(data.id);
+                    var dn = this.model.findChessInNotBattleHerosById(data.id);
                     if (dn != null && isUplevel == false) {
                         isUplevel = true;
                         dn.ChessExample.heroStar = arr.length > 2 ? 3 : 2;
@@ -260,14 +273,15 @@ var game;
                         this.showPrompt(dn.ChessExample.heroInfo.name + " \u5347\u81F3" + dn.ChessExample.heroStar + "\u661F\n");
                     }
                     else {
-                        this.removeHeroToBattleGroupOrNotBattleGroup(dn.ChessExample.id, dn.targetX, dn.targetY);
+                        dn.ChessExample.removeThis();
+                        this.model.notBattleHeros[dn.targetX] = null;
                     }
                 }
             }
             else {
                 for (var c = 0; c < arr.length; c++) {
                     data = arr[c];
-                    var db = findInBattle(data.id);
+                    var db = this.model.findChessInBattleHerosById(data.id);
                     if (db != null && isUplevel == false) {
                         isUplevel = true;
                         db.ChessExample.heroStar = arr.length > 2 ? 3 : 2;
@@ -276,13 +290,14 @@ var game;
                         this.showPrompt(db.ChessExample.heroInfo.name + " \u5347\u81F3" + db.ChessExample.heroStar + "\u661F\n");
                     }
                     else {
-                        var db_1 = findInBattle(data.id);
-                        if (db_1) {
-                            this.removeHeroToBattleGroupOrNotBattleGroup(db_1.ChessExample.id, db_1.targetX, db_1.targetY);
+                        var da = this.model.findChessInNotBattleHerosById(data.id);
+                        if (da != null) {
+                            da.ChessExample.removeThis();
+                            this.model.notBattleHeros[da.targetX] = null;
                         }
                         else {
-                            var dj = findInNotBattle(data.id);
-                            this.removeHeroToBattleGroupOrNotBattleGroup(dj.ChessExample.id, dj.targetX, dj.targetY);
+                            db.ChessExample.removeThis();
+                            this.model.battleHeros[db.targetX][db.targetY] = null;
                         }
                     }
                 }
@@ -315,20 +330,6 @@ var game;
             chess.x = hX;
             chess.y = hY;
             this.model.moveBattleHerosToNotBattleHeros(id, targetX, targetY);
-        };
-        /**从界面上移除一个棋子
-         * @param id 生成棋子时的唯一id
-         */
-        GamePanel.prototype.removeHeroToBattleGroupOrNotBattleGroup = function (id, targetX, targetY) {
-            var i = String(id);
-            if (this['notbattlegroup'].getChildByName(i) != null) {
-                this.model.notBattleHeros[targetX] = null;
-                this['notbattlegroup'].removeChild(this['notbattlegroup'].getChildByName(i));
-            }
-            if (this['battlegroup'].getChildByName(i) != null) {
-                this.model.battleHeros[targetX][targetY] = null;
-                this['battlegroup'].removeChild(this['battlegroup'].getChildByName(i));
-            }
         };
         return GamePanel;
     }(eui.Component));
