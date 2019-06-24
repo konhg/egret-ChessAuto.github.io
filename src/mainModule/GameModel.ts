@@ -17,7 +17,7 @@ module game {
 		/**当前商店的棋子数组★ */
 		public currentShopHeros: GameHeroVO[] = [];
 		/**当前棋盘等级 */
-		public level: number = 1;
+		public level: number = 10;
 		/**允许上阵的最大人数 */
 		public population: number = 10;
 		/**未上阵棋子列表 */
