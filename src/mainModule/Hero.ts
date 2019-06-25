@@ -39,12 +39,27 @@ module game {
 			this.pointY = this.y;
 			this.parent.setChildIndex(this, this.parent.numChildren - 1);
 			this.parent.parent.setChildIndex(this.parent, this.parent.parent.numChildren - 1);
+
+			let tips: eui.Component = new eui.Component();
+			tips.name = 'heroTips';
+			tips.skinName = 'HeroTips';
+			(<eui.Label>tips['heroName']).text = this.heroInfo.name;
+			(<eui.Label>tips['heroName']).textColor = Global.getQualityColor(this.heroInfo.cost);
+			(<eui.Label>tips['atk']).text = "攻击力:" + this.heroInfo.atk;
+			(<eui.Label>tips['ftk']).text = "防御力:" + this.heroInfo.ftk;
+			this.addChild(tips);
+			tips.x = 0;
+			tips.y = -tips.height;
+			tips = null;
 		}
 		protected onTouchMove(event: egret.TouchEvent): void {
 			super.onTouchMove(event);
 		}
 		protected onTouchEnd(event: egret.TouchEvent): void {
 			super.onTouchEnd(event);
+			if (this.getChildByName('heroTips') != null) {
+				this.removeChild(this.getChildByName('heroTips'));
+			}
 			let battleGroup: eui.Group = (<eui.Group>this.parent.parent['battlegroup']);
 			let battleGroupX: number = battleGroup.x;
 			let battleGroupY: number = battleGroup.y;

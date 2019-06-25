@@ -42,7 +42,6 @@ var game;
             this.occupation.text = "" + str;
             var model = game.GameController.this.model;
             var uplevelArr = []; //与当期商店棋子相同的棋子列表
-            // let uplevelObjA: uplevelObj = {};//与当期商店棋子相同的棋子实例
             /**遍历已上阵数组 */
             for (var s = 0; s < model.battleHeros.length; s++) {
                 for (var ds = 0; ds < model.battleHeros[s].length; ds++) {

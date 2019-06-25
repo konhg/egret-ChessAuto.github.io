@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="HeroTips" width="150" height="120" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing">
+	<e:Rect width="100%" height="100%" fillAlpha="1" strokeColor="0x000000" fillColor="0x000000"/>
+	<e:Label id="heroName" text="带找回傻逼" x="15" y="11" textColor="0xb8b5b0" size="25" fontFamily="SimHei" bold="true"/>
+	<e:Label id="atk" text="攻击力:100" x="15" y="55" size="20" textColor="0xffffff" fontFamily="SimHei"/>
+	<e:Label id="ftk" text="防御力:100" x="15" y="87" size="20" textColor="0xffffff" fontFamily="SimHei"/>
+</e:Skin>

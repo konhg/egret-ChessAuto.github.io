@@ -20,7 +20,7 @@ module game {
 		/**当前棋盘等级 */
 		public level: number = 10;
 		/**允许上阵的最大人数 */
-		public population: number = 10;
+		public population: number = 100;
 		/**未上阵棋子列表 */
 		public notBattleHeros: BattleHeroVO[] = [];
 		/**已上阵棋子列表 */

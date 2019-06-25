@@ -20,6 +20,7 @@
 		"resource/eui_skins/CheckBoxSkin.exml",
 		"resource/eui_skins/gameSkin/HeroBattle.exml",
 		"resource/eui_skins/gameSkin/HeroShow.exml",
+		"resource/eui_skins/gameSkin/HeroTips.exml",
 		"resource/eui_skins/gameSkin/MainSkin.exml",
 		"resource/eui_skins/gameSkin/ShopSkin.exml",
 		"resource/eui_skins/HScrollBarSkin.exml",

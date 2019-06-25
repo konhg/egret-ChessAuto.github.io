@@ -8,9 +8,9 @@ var game;
             /**当前商店的棋子数组★ */
             this.currentShopHeros = [];
             /**当前棋盘等级 */
-            this.level = 1;
+            this.level = 10;
             /**允许上阵的最大人数 */
-            this.population = 10;
+            this.population = 100;
             /**未上阵棋子列表 */
             this.notBattleHeros = [];
             /**已上阵棋子列表 */
@@ -20,7 +20,7 @@ var game;
             /**未上阵棋盘 */
             this.checkerboardNotBattle = [];
             this.notBattleHeros.length = game.Global.notBattleNumberMax;
-            //初始化二维数组
+            //初始化战斗列表二维数组
             for (var i = 0; i < 8; i++) {
                 var arr = [];
                 arr.length = 8;
@@ -154,7 +154,6 @@ var game;
                         continue;
                     }
                     dx = this.battleHeros[i][j];
-                    console.log(i, j, dx.ChessExample.id);
                     if (dx.ChessExample.id == id) {
                         return dx;
                     }
@@ -170,7 +169,6 @@ var game;
                     continue;
                 }
                 dy = this.notBattleHeros[j];
-                console.log(j, dy.ChessExample.id);
                 if (dy.ChessExample.id == id) {
                     return dy;
                 }
@@ -192,7 +190,6 @@ var game;
                     this.battleHeros[targetX][targetY].targetY = targetY;
                     this.notBattleHeros[i] = null;
                     arrN = n = null;
-                    console.dir(this.battleHeros);
                     return;
                 }
             }
@@ -213,7 +210,6 @@ var game;
                         this.battleHeros[targetX][targetY].targetY = targetY;
                         this.battleHeros[i][j] = null;
                         arrB = b = null;
-                        console.dir(this.battleHeros);
                         return;
                     }
                 }
@@ -233,7 +229,6 @@ var game;
                         this.notBattleHeros[targetX].targetY = targetY;
                         this.battleHeros[i][j] = null;
                         arr = null;
-                        console.dir(this.notBattleHeros);
                         return;
                     }
                 }
@@ -254,7 +249,6 @@ var game;
                     this.notBattleHeros[targetX].targetY = targetY;
                     this.notBattleHeros[i] = null;
                     arrN = n = null;
-                    console.dir(this.notBattleHeros);
                     return;
                 }
             }

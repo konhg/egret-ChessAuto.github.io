@@ -77,11 +77,11 @@ var game;
         function Global() {
         }
         /**游戏移动时间 */
-        Global.gameMoveTime = 90;
+        Global.gameMoveTime = 15;
         /**游戏移动等待时间 */
         Global.gameMoveWaitTime = 3;
         /**游戏战斗时间 */
-        Global.gameBattleTime = 60;
+        Global.gameBattleTime = 20;
         /**棋子的宽 */
         Global.chessWidth = 62.5;
         /**棋子的高 */
@@ -138,7 +138,15 @@ var game;
                 new game.GameHeroVO("地精工程师", ["地精", "工匠"], 100, 100, 5),
             ],
         ];
-        /**获得对应等级的概率 */
+        /**获得对应等级的概率
+         * 下标i减去下标i-1的值，就是概率，i=0就减去0，值是负数就是0
+         * 举例 [20, 50, 80, 100, 0]
+         * 一星概率20-0等于20%
+         * 二星概率50-20等于30%
+         * 三星概率80-50等于30%
+         * 四星概率100-80等于20%
+         * 五星概率0-100小于0都是0%
+         */
         Global.getRandomRatio = function (level) {
             switch (level) {
                 case 1:
@@ -166,6 +174,12 @@ var game;
         };
         /**抽取
          * 根据等级抽取5个对应的英雄
+         * 首先从0-100抽一个随机数
+         * 根据概率确定几星英雄
+         * 举例，7级的概率是[20, 50, 80, 100, 0]
+         * 从0-100随机一个77
+         * 77在50-80之间，就是3星英雄
+         * 在从三星英雄里随机一个出来
          */
         Global.getHeros = function (level) {
             var randomRatio = Global.getRandomRatio(level);
@@ -176,7 +190,6 @@ var game;
             for (var i = 0; i < 5; i++) {
                 n = Math.round(Math.random() * 100);
                 n = Math.abs(n);
-                // console.log(`抽取英雄的随机数0-100,值:${n}`);
                 if (n >= 0 && n <= randomRatio[0]) {
                     //一费
                     l = Math.floor(Math.random() * Global.heros[0].length - 1);
@@ -203,7 +216,6 @@ var game;
                     lucky_hero = Global.heros[4][Math.abs(l)];
                 }
                 lucky_numbers.push(lucky_hero);
-                // console.log(`抽到的英雄:${lucky_hero.name}`);
             }
             return lucky_numbers.length == 5 ? lucky_numbers : null;
         };
@@ -248,15 +260,11 @@ var Main = (function (_super) {
                     case 1:
                         _a.sent();
                         this.createGameScene();
-                        return [4 /*yield*/, RES.getResAsync("description_json")
-                            // this.startAnimation(result);
-                        ];
+                        return [4 /*yield*/, RES.getResAsync("description_json")];
                     case 2:
                         result = _a.sent();
-                        // this.startAnimation(result);
                         return [4 /*yield*/, platform.login()];
                     case 3:
-                        // this.startAnimation(result);
                         _a.sent();
                         return [4 /*yield*/, platform.getUserInfo()];
                     case 4:
@@ -334,32 +342,6 @@ var Main = (function (_super) {
         var texture = RES.getRes(name);
         result.texture = texture;
         return result;
-    };
-    /**
-     * 描述文件加载成功，开始播放动画
-     * Description file loading is successful, start to play the animation
-     */
-    Main.prototype.startAnimation = function (result) {
-        var parser = new egret.HtmlTextParser();
-        var textflowArr = result.map(function (text) { return parser.parse(text); });
-        // let textfield = this.textfield;
-        var count = -1;
-        var change = function () {
-            count++;
-            if (count >= textflowArr.length) {
-                count = 0;
-            }
-            var textFlow = textflowArr[count];
-            // 切换描述内容
-            // Switch to described content
-            // textfield.textFlow = textFlow;
-            // let tw = egret.Tween.get(textfield);
-            // tw.to({ "alpha": 1 }, 200);
-            // tw.wait(2000);
-            // tw.to({ "alpha": 0 }, 200);
-            // tw.call(change, this);
-        };
-        change();
     };
     /**
      * 点击按钮

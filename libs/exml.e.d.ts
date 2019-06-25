@@ -10,6 +10,8 @@ declare class HeroBattle extends eui.Skin{
 }
 declare class HeroShow extends eui.Skin{
 }
+declare class HeroTips extends eui.Skin{
+}
 declare class MainSkin extends eui.Skin{
 }
 declare class ShopSkin extends eui.Skin{

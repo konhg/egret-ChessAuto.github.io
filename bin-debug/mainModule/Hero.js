@@ -46,6 +46,7 @@ var game;
                     break;
             }
         };
+        /**设置是否可拖拽 */
         Hero.prototype.settouch = function (bool) {
             this.touchChildren = bool;
         };
@@ -55,15 +56,26 @@ var game;
             this.pointY = this.y;
             this.parent.setChildIndex(this, this.parent.numChildren - 1);
             this.parent.parent.setChildIndex(this.parent, this.parent.parent.numChildren - 1);
-            // console.log(`起点全局坐标 X:${event.stageX} Y:${event.stageY}`);
+            var tips = new eui.Component();
+            tips.name = 'heroTips';
+            tips.skinName = 'HeroTips';
+            tips['heroName'].text = this.heroInfo.name;
+            tips['heroName'].textColor = game.Global.getQualityColor(this.heroInfo.cost);
+            tips['atk'].text = "攻击力:" + this.heroInfo.atk;
+            tips['ftk'].text = "防御力:" + this.heroInfo.ftk;
+            this.addChild(tips);
+            tips.x = 0;
+            tips.y = -tips.height;
+            tips = null;
         };
         Hero.prototype.onTouchMove = function (event) {
             _super.prototype.onTouchMove.call(this, event);
-            // console.log(`拖拽中全局坐标 X:${event.stageX} Y:${event.stageY}`);
         };
         Hero.prototype.onTouchEnd = function (event) {
             _super.prototype.onTouchEnd.call(this, event);
-            // console.log(`拖拽结束全局坐标 X:${event.stageX} Y:${event.stageY}`);
+            if (this.getChildByName('heroTips') != null) {
+                this.removeChild(this.getChildByName('heroTips'));
+            }
             var battleGroup = this.parent.parent['battlegroup'];
             var battleGroupX = battleGroup.x;
             var battleGroupY = battleGroup.y;
