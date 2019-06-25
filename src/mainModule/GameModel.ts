@@ -1,4 +1,5 @@
 module game {
+	/**状态枚举 */
 	export const enum GAMESTATE {
 		/**无状态 */
 		NONE = -1,
@@ -30,7 +31,7 @@ module game {
 		public checkerboardNotBattle: any[] = [];
 		public constructor() {
 			this.notBattleHeros.length = Global.notBattleNumberMax;
-			//初始化二维数组
+			//初始化战斗列表二维数组
 			for (let i = 0; i < 8; i++) {
 				let arr: BattleHeroVO[] = [];
 				arr.length = 8;
@@ -164,7 +165,6 @@ module game {
 						continue;
 					}
 					dx = this.battleHeros[i][j];
-					console.log(i, j, dx.ChessExample.id);
 					if (dx.ChessExample.id == id) {
 						return dx;
 					}
@@ -180,7 +180,6 @@ module game {
 					continue;
 				}
 				dy = this.notBattleHeros[j];
-				console.log(j, dy.ChessExample.id);
 				if (dy.ChessExample.id == id) {
 					return dy;
 				}
@@ -202,7 +201,6 @@ module game {
 					this.battleHeros[targetX][targetY].targetY = targetY;
 					this.notBattleHeros[i] = null;
 					arrN = n = null;
-					console.dir(this.battleHeros);
 					return;
 				}
 			}
@@ -223,7 +221,6 @@ module game {
 						this.battleHeros[targetX][targetY].targetY = targetY;
 						this.battleHeros[i][j] = null;
 						arrB = b = null;
-						console.dir(this.battleHeros);
 						return;
 					}
 				}
@@ -243,7 +240,6 @@ module game {
 						this.notBattleHeros[targetX].targetY = targetY;
 						this.battleHeros[i][j] = null;
 						arr = null;
-						console.dir(this.notBattleHeros);
 						return;
 					}
 				}
@@ -264,7 +260,6 @@ module game {
 					this.notBattleHeros[targetX].targetY = targetY;
 					this.notBattleHeros[i] = null;
 					arrN = n = null;
-					console.dir(this.notBattleHeros);
 					return;
 				}
 			}

@@ -17,7 +17,6 @@ module game {
 		private star: eui.Label;//是否可升星
 		private haveNum: eui.Label;//已拥有的数量
 		public delArr: uplevelObj[] = [];
-
 		public constructor() {
 			super();
 			this.skinName = 'HeroShow';
@@ -41,8 +40,6 @@ module game {
 			this.occupation.text = `${str}`;
 			let model: GameModel = GameController.this.model;
 			let uplevelArr: uplevelObj[] = [];//与当期商店棋子相同的棋子列表
-			// let uplevelObjA: uplevelObj = {};//与当期商店棋子相同的棋子实例
-
 			/**遍历已上阵数组 */
 			for (let s = 0; s < model.battleHeros.length; s++) {
 				for (let ds = 0; ds < model.battleHeros[s].length; ds++) {
@@ -57,7 +54,6 @@ module game {
 						uplevelObjA.star = a.ChessExample.heroStar
 						uplevelArr.push(uplevelObjA);
 					}
-
 				}
 			}
 			/**遍历未上阵数组 */

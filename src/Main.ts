@@ -92,35 +92,49 @@ module game {
                 new game.GameHeroVO("地精工程师", ["地精", "工匠"], 100, 100, 5),
             ],
         ]
-        /**获得对应等级的概率 */
+        /**获得对应等级的概率
+         * 下标i减去下标i-1的值，就是概率，i=0就减去0，值是负数就是0
+         * 举例 [20, 50, 80, 100, 0]
+         * 一星概率20-0等于20%
+         * 二星概率50-20等于30%
+         * 三星概率80-50等于30%
+         * 四星概率100-80等于20%
+         * 五星概率0-100小于0都是0%
+         */
         static readonly getRandomRatio: Function = (level: number): number[] => {
             switch (level) {
                 case 1:
-                    return [100, 0, 0, 0, 0]
+                    return [100, 0, 0, 0, 0];
                 case 2:
-                    return [70, 100, 0, 0, 0]
+                    return [70, 100, 0, 0, 0];
                 case 3:
-                    return [50, 90, 100, 0, 0]
+                    return [50, 90, 100, 0, 0];
                 case 4:
-                    return [40, 80, 100, 0, 0]
+                    return [40, 80, 100, 0, 0];
                 case 5:
-                    return [35, 70, 92, 100, 0]
+                    return [35, 70, 92, 100, 0];
                 case 6:
-                    return [25, 60, 80, 100, 0]
+                    return [25, 60, 80, 100, 0];
                 case 7:
-                    return [20, 50, 80, 100, 0]
+                    return [20, 50, 80, 100, 0];
                 case 8:
-                    return [20, 50, 70, 99, 100]
+                    return [20, 50, 70, 99, 100];
                 case 9:
-                    return [20, 50, 70, 92, 100]
+                    return [20, 50, 70, 92, 100];
                 case 10:
-                    return [15, 40, 60, 85, 100]
+                    return [15, 40, 60, 85, 100];
 
             }
             return null;
         }
         /**抽取
          * 根据等级抽取5个对应的英雄
+         * 首先从0-100抽一个随机数
+         * 根据概率确定几星英雄
+         * 举例，7级的概率是[20, 50, 80, 100, 0]
+         * 从0-100随机一个77
+         * 77在50-80之间，就是3星英雄
+         * 在从三星英雄里随机一个出来
          */
         static readonly getHeros: Function = (level: number): game.GameHeroVO[] => {
             let randomRatio: number[] = Global.getRandomRatio(level);
@@ -131,7 +145,6 @@ module game {
             for (let i = 0; i < 5; i++) {
                 n = Math.round(Math.random() * 100);
                 n = Math.abs(n);
-                // console.log(`抽取英雄的随机数0-100,值:${n}`);
                 if (n >= 0 && n <= randomRatio[0]) {
                     //一费
                     l = Math.floor(Math.random() * Global.heros[0].length - 1);
@@ -154,7 +167,6 @@ module game {
                     lucky_hero = Global.heros[4][Math.abs(l)];
                 }
                 lucky_numbers.push(lucky_hero);
-                // console.log(`抽到的英雄:${lucky_hero.name}`);
 
             }
             return lucky_numbers.length == 5 ? lucky_numbers : null;
@@ -174,7 +186,6 @@ class Main extends eui.UILayer {
         egret.lifecycle.addLifecycleListener((context) => {
             // custom lifecycle plugin
         })
-
         egret.lifecycle.onPause = () => {
             egret.ticker.pause();
         }
@@ -182,14 +193,11 @@ class Main extends eui.UILayer {
         egret.lifecycle.onResume = () => {
             egret.ticker.resume();
         }
-
         //inject the custom material parser
         //注入自定义的素材解析器
         let assetAdapter = new AssetAdapter();
         egret.registerImplementation("eui.IAssetAdapter", assetAdapter);
         egret.registerImplementation("eui.IThemeAdapter", new ThemeAdapter());
-
-
         this.runGame().catch(e => {
             console.log(e);
         })
@@ -199,7 +207,6 @@ class Main extends eui.UILayer {
         await this.loadResource()
         this.createGameScene();
         const result = await RES.getResAsync("description_json")
-        // this.startAnimation(result);
         await platform.login();
         const userInfo = await platform.getUserInfo();
         console.log(userInfo);
@@ -261,36 +268,6 @@ class Main extends eui.UILayer {
         result.texture = texture;
         return result;
     }
-    /**
-     * 描述文件加载成功，开始播放动画
-     * Description file loading is successful, start to play the animation
-     */
-    private startAnimation(result: Array<any>): void {
-        let parser = new egret.HtmlTextParser();
-
-        let textflowArr = result.map(text => parser.parse(text));
-        // let textfield = this.textfield;
-        let count = -1;
-        let change = () => {
-            count++;
-            if (count >= textflowArr.length) {
-                count = 0;
-            }
-            let textFlow = textflowArr[count];
-
-            // 切换描述内容
-            // Switch to described content
-            // textfield.textFlow = textFlow;
-            // let tw = egret.Tween.get(textfield);
-            // tw.to({ "alpha": 1 }, 200);
-            // tw.wait(2000);
-            // tw.to({ "alpha": 0 }, 200);
-            // tw.call(change, this);
-        };
-
-        change();
-    }
-
     /**
      * 点击按钮
      * Click the button

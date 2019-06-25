@@ -29,6 +29,7 @@ module game {
 					break;
 			}
 		}
+		/**设置是否可拖拽 */
 		public settouch(bool: boolean): void {
 			this.touchChildren = bool;
 		}
@@ -38,16 +39,12 @@ module game {
 			this.pointY = this.y;
 			this.parent.setChildIndex(this, this.parent.numChildren - 1);
 			this.parent.parent.setChildIndex(this.parent, this.parent.parent.numChildren - 1);
-
-			// console.log(`起点全局坐标 X:${event.stageX} Y:${event.stageY}`);
 		}
 		protected onTouchMove(event: egret.TouchEvent): void {
 			super.onTouchMove(event);
-			// console.log(`拖拽中全局坐标 X:${event.stageX} Y:${event.stageY}`);
 		}
 		protected onTouchEnd(event: egret.TouchEvent): void {
 			super.onTouchEnd(event);
-			// console.log(`拖拽结束全局坐标 X:${event.stageX} Y:${event.stageY}`);
 			let battleGroup: eui.Group = (<eui.Group>this.parent.parent['battlegroup']);
 			let battleGroupX: number = battleGroup.x;
 			let battleGroupY: number = battleGroup.y;
