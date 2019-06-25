@@ -1,0 +1,27 @@
+nes that start with '#' are comments.
+
+# IntelliJ IDEA Project files
+
+.idea
+*.iml
+*.ipr
+*.iws
+*.pyc
+out/
+
+# Eclipse Project files
+.classpath
+.project
+.settings/
+
+# vscode
+.vscode/
+
+.DS_Store
+Thumbs.db
+
+# Maven project files
+target/
+
+# egret
+bin-release/
