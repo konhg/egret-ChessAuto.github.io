@@ -39,7 +39,7 @@ module game {
 			this.pointY = this.y;
 			this.parent.setChildIndex(this, this.parent.numChildren - 1);
 			this.parent.parent.setChildIndex(this.parent, this.parent.parent.numChildren - 1);
-
+			/**生成一个小tip */
 			let tips: eui.Component = new eui.Component();
 			tips.name = 'heroTips';
 			tips.skinName = 'HeroTips';

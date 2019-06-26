@@ -9,4 +9,5 @@
 	<e:Button id="closeBtn" label="关闭" width="150" height="100" right="0" bottom="0" name="closeBtn"/>
 	<e:Label id="probabilityShow" text="Lv10: ★1% ★1% ★1% ★1% ★1%" horizontalCenter="0" size="30" top="0" fontFamily="SimHei"/>
 	<e:Button id="refreshlist" label="刷新" right="0" top="0" height="100" name="closeBtn"/>
+	<e:CheckBox id="lock" label="锁定" y="46.17" anchorOffsetX="0" anchorOffsetY="0" horizontalCenter="0"/>
 </e:Skin>

@@ -104,7 +104,7 @@ var game;
                 new game.GameHeroVO("巨牙海民", ["野兽", "兽人"], 100, 100, 1),
                 new game.GameHeroVO("魅惑魔女", ["野兽", "德鲁伊"], 100, 100, 1),
                 new game.GameHeroVO("赏金猎人", ["赏金猎人", "刺客"], 100, 100, 1),
-                new game.GameHeroVO("食人魔魔法师", ["食人魔", "法师"], 100, 100, 1),
+                new game.GameHeroVO("食人魔法师", ["食人魔", "法师"], 100, 100, 1),
                 new game.GameHeroVO("蝙蝠骑士", ["巨魔", "骑士"], 100, 100, 1),
                 new game.GameHeroVO("敌法师", ["精灵", "恶魔猎手"], 100, 100, 1),
                 new game.GameHeroVO("发条技师", ["工匠", "地精"], 100, 100, 1),

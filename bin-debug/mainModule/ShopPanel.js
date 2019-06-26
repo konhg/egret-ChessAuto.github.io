@@ -65,6 +65,13 @@ var game;
                     }
                     instance.textFlow = new egret.HtmlTextParser().parser("<font>Lv" + this.model.level + ":</font>" + str);
                     break;
+                case "lock":
+                    instance.currentState = this.model.isLockShop ? "upAndSelected" : 'up';
+                    instance.addEventListener(egret.TouchEvent.TOUCH_TAP, function (e) {
+                        e.currentTarget.currentState = (e.currentTarget.currentState == "upAndSelected" ? "up" : "upAndSelected");
+                        _this.model.isLockShop = e.currentTarget.currentState == "upAndSelected";
+                    }, this);
+                    break;
             }
         };
         ShopPanel.prototype.createChildren = function () {

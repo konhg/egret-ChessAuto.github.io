@@ -7,6 +7,8 @@ var game;
         function GameModel() {
             /**当前商店的棋子数组★ */
             this.currentShopHeros = [];
+            /**是否锁定商店 */
+            this.isLockShop = false;
             /**当前棋盘等级 */
             this.level = 10;
             /**允许上阵的最大人数 */

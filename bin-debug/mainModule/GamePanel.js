@@ -80,8 +80,10 @@ var game;
                     this.countDown = game.Global.gameMoveTime;
                     this.model.stateInNow = 0 /* MOVETIME */;
                     this.countDownText = "准备阶段:";
-                    this.model.currentShopHeros = game.Global.getHeros(this.model.level);
-                    game.GameTools.showTips("\u5546\u5E97\u5237\u65B0\u4E86\u65B0\u7684\u82F1\u96C4", 1);
+                    if (this.model.isLockShop == false) {
+                        this.model.currentShopHeros = game.Global.getHeros(this.model.level);
+                        game.GameTools.showTips("\u5546\u5E97\u5237\u65B0\u4E86\u65B0\u7684\u82F1\u96C4", 1);
+                    }
                     this.model.setAllBattleChessTouchFalse(true);
                     this.removeShopPanel();
                     return;

@@ -17,6 +17,8 @@ module game {
 		public stateInNow: number;
 		/**当前商店的棋子数组★ */
 		public currentShopHeros: GameHeroVO[] = [];
+		/**是否锁定商店 */
+		public isLockShop = false;
 		/**当前棋盘等级 */
 		public level: number = 10;
 		/**允许上阵的最大人数 */

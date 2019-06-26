@@ -48,6 +48,13 @@ module game {
 					}
 					(<eui.Label>instance).textFlow = new egret.HtmlTextParser().parser(`<font>Lv${this.model.level}:</font>${str}`)
 					break;
+				case "lock":
+					(<eui.CheckBox>instance).currentState = this.model.isLockShop ? "upAndSelected" : 'up';
+					(<eui.CheckBox>instance).addEventListener(egret.TouchEvent.TOUCH_TAP, (e: egret.TouchEvent): void => {
+					(<eui.CheckBox>e.currentTarget).currentState = ((<eui.CheckBox>e.currentTarget).currentState == "upAndSelected" ? "up" : "upAndSelected");
+						this.model.isLockShop = (<eui.CheckBox>e.currentTarget).currentState == "upAndSelected";
+					}, this);
+					break;
 			}
 		}
 		protected createChildren(): void {

@@ -68,10 +68,13 @@ module game {
 					this.countDown = Global.gameMoveTime;
 					this.model.stateInNow = GAMESTATE.MOVETIME;
 					this.countDownText = "准备阶段:";
-					this.model.currentShopHeros = Global.getHeros(this.model.level);
-					GameTools.showTips(`商店刷新了新的英雄`, 1);
+					if (this.model.isLockShop == false) {
+						this.model.currentShopHeros = Global.getHeros(this.model.level);
+						GameTools.showTips(`商店刷新了新的英雄`, 1);
+						this.removeShopPanel();
+					}
 					this.model.setAllBattleChessTouchFalse(true);
-					this.removeShopPanel();
+
 					return;
 				case GAMESTATE.MOVEWAIT:
 					this.countDown = Global.gameMoveWaitTime;
