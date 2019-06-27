@@ -227,7 +227,9 @@ var game;
 var Main = (function (_super) {
     __extends(Main, _super);
     function Main() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.rainSpecialEffects = [];
+        return _this;
     }
     Main.prototype.createChildren = function () {
         _super.prototype.createChildren.call(this);
@@ -321,10 +323,44 @@ var Main = (function (_super) {
      * Create scene interface
      */
     Main.prototype.createGameScene = function () {
+        var _this = this;
         Main.stage_Height = this.stage.stageHeight;
         Main.stage_Width = this.stage.stageWidth;
         game.Global.gameController = new eui.UILayer();
         Main.gameUILayer.addChild(game.Global.gameController);
+        var buttonRain = new eui.Button();
+        this.addChild(buttonRain);
+        buttonRain.label = "开启背景特效(掉帧)";
+        buttonRain.bottom = 50;
+        buttonRain.left = 50;
+        buttonRain.name = 'buttonRain';
+        buttonRain.addEventListener(egret.TouchEvent.TOUCH_TAP, function (e) {
+            if (e.target.label == "开启背景特效(掉帧)") {
+                e.target.label = "关闭背景特效";
+                var group = new eui.Group();
+                group.name = "raingroup";
+                game.Global.gameController.addChild(group);
+                group.touchEnabled = group.touchChildren = false;
+                group.width = Main.stage_Width;
+                group.height = Main.stage_Height;
+                var rect = new eui.Rect(Main.stage_Width, Main.stage_Height, 0x000000);
+                group.addChild(rect);
+                rect.x = rect.y = 0;
+                for (var i = 0; i < 35; ++i) {
+                    _this.rainSpecialEffects.push(new TipsUtils.Rain({ target: group, row: 25, i: i }));
+                }
+            }
+            else {
+                e.target.label = "开启背景特效(掉帧)";
+                if (game.Global.gameController.getChildByName('raingroup')) {
+                    for (var i = 0; i < _this.rainSpecialEffects.length; i++) {
+                        _this.rainSpecialEffects[i].clear();
+                    }
+                    _this.rainSpecialEffects = [];
+                    game.Global.gameController.removeChild(game.Global.gameController.getChildByName('raingroup'));
+                }
+            }
+        }, this);
         var button = new eui.Button();
         button.label = "开始";
         button.horizontalCenter = 0;
@@ -348,6 +384,8 @@ var Main = (function (_super) {
      * Click the button
      */
     Main.prototype.onButtonClick = function (e) {
+        this.getChildByName('buttonRain').removeEventListener(egret.TouchEvent.TOUCH_TAP, null, this);
+        this.getChildByName('buttonRain').parent.removeChild(this.getChildByName('buttonRain'));
         this.getChildByName('click').removeEventListener(egret.TouchEvent.TOUCH_TAP, this.onButtonClick, this);
         this.getChildByName('click').parent.removeChild(this.getChildByName('click'));
         game.GameController.this.showPanel();

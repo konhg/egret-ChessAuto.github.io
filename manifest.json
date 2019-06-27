@@ -7,7 +7,8 @@
 		"libs/modules/tween/tween.js",
 		"libs/modules/game/game.js",
 		"libs/modules/socket/socket.js",
-		"libs/modules/promise/promise.js"
+		"libs/modules/promise/promise.js",
+		"libs/custom.color/custom.color.js"
 	],
 	"game": [
 		"bin-debug/mainModule/GameModel.js",

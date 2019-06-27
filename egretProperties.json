@@ -26,6 +26,10 @@
     },
     {
       "name": "promise"
+    },
+    {
+      "name": "custom.color",
+      "path": "libs/custom.color"
     }
   ]
 }

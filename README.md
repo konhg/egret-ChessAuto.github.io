@@ -12,4 +12,6 @@
 
 移动时可以上阵下阵，锁定和战斗时不允许上阵下阵
 
+增加一个掉帧的背景特效，贼卡
+
 [点击体验](https://konhg.github.io/egret-ChessAuto.github.io/)

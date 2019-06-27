@@ -83,9 +83,9 @@ var game;
                     if (this.model.isLockShop == false) {
                         this.model.currentShopHeros = game.Global.getHeros(this.model.level);
                         game.GameTools.showTips("\u5546\u5E97\u5237\u65B0\u4E86\u65B0\u7684\u82F1\u96C4", 1);
+                        this.removeShopPanel();
                     }
                     this.model.setAllBattleChessTouchFalse(true);
-                    this.removeShopPanel();
                     return;
                 case 1 /* MOVEWAIT */:
                     this.countDown = game.Global.gameMoveWaitTime;

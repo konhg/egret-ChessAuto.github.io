@@ -177,7 +177,7 @@ class Main extends eui.UILayer {
     public static gameUILayer: eui.UILayer;
     public static stage_Height: number;
     public static stage_Width: number;
-
+    private rainSpecialEffects: TipsUtils.Rain[] = [];
     protected createChildren(): void {
         super.createChildren();
         Main.gameUILayer = new eui.UILayer();
@@ -249,6 +249,43 @@ class Main extends eui.UILayer {
         Main.stage_Width = this.stage.stageWidth;
         game.Global.gameController = new eui.UILayer();
         Main.gameUILayer.addChild(game.Global.gameController);
+
+
+        let buttonRain: eui.Button = new eui.Button();
+
+        this.addChild(buttonRain);
+        buttonRain.label = "开启背景特效(掉帧)";
+        buttonRain.bottom = 50;
+        buttonRain.left = 50;
+        buttonRain.name = 'buttonRain';
+
+        buttonRain.addEventListener(egret.TouchEvent.TOUCH_TAP, (e: egret.TouchEvent) => {
+            if ((<eui.Button>e.target).label == "开启背景特效(掉帧)") {
+                (<eui.Button>e.target).label = "关闭背景特效";
+                let group: eui.Group = new eui.Group();
+                group.name = "raingroup";
+                game.Global.gameController.addChild(group);
+                group.touchEnabled = group.touchChildren = false;
+                group.width = Main.stage_Width;
+                group.height = Main.stage_Height
+                let rect: eui.Rect = new eui.Rect(Main.stage_Width, Main.stage_Height, 0x000000);
+                group.addChild(rect);
+                rect.x = rect.y = 0;
+                for (let i = 0; i < 35; ++i) {
+                    this.rainSpecialEffects.push(new TipsUtils.Rain({ target: group, row: 25, i: i }));
+                }
+            } else {
+                (<eui.Button>e.target).label = "开启背景特效(掉帧)"
+                if (game.Global.gameController.getChildByName('raingroup')) {
+                    for (let i = 0; i < this.rainSpecialEffects.length; i++) {
+                        this.rainSpecialEffects[i].clear();
+                    }
+                    this.rainSpecialEffects = [];
+                    game.Global.gameController.removeChild(game.Global.gameController.getChildByName('raingroup'));
+                }
+            }
+
+        }, this);
         let button = new eui.Button();
         button.label = "开始";
         button.horizontalCenter = 0;
@@ -273,6 +310,9 @@ class Main extends eui.UILayer {
      * Click the button
      */
     private onButtonClick(e: egret.TouchEvent) {
+        this.getChildByName('buttonRain').removeEventListener(egret.TouchEvent.TOUCH_TAP, null, this);
+        this.getChildByName('buttonRain').parent.removeChild(this.getChildByName('buttonRain'));
+
         this.getChildByName('click').removeEventListener(egret.TouchEvent.TOUCH_TAP, this.onButtonClick, this);
         this.getChildByName('click').parent.removeChild(this.getChildByName('click'));
         game.GameController.this.showPanel();
