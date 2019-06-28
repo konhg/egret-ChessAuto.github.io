@@ -25,3 +25,4 @@ target/
 
 # egret
 bin-release/
+custom.color/

@@ -292,7 +292,7 @@ var TipsUtils;
                 trail.move();
                 trail.traverse(function (c, i, last) {
                     var color = Number(convertColor("136,100%," + 85 / len * (i + 1) + "%").replace('#', '0x'));
-                    console.log(convertColor("136,100%," + 85 / len * (i + 1) + "%").replace('#', '0x'));
+                    // console.log(convertColor(`136,100%,${85 / len * (i + 1)}%`).replace('#', '0x'))
                     c.element.textColor = color;
                     if (last) {
                         c.mutate();

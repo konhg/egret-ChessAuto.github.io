@@ -32,6 +32,7 @@ function Color(color) {
         return str;
     };
 }
+/**hsl色值转16进制色值 */
 function convertColor(str) {
     // var str = $('#' + id).val();
     var color = new Color(str);
