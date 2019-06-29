@@ -3,15 +3,18 @@ module game {
 	 * 单个棋子实例
 	 * @author konhg
 	 * @description 实例化单个棋子，继承eui.Panel，可拖拽
-	 * @param heroID 棋子数据, 唯一
+	 * @param heroInfo 棋子数据
+	 * @param id 棋子id, 唯一
 	 * @param heroStar 棋子的星级, 不唯一
 	 * @param moveChessToBattleGroup 拖拽到战斗列表方法
 	 * @param moveChessToNotBattleGroup 拖拽到未战斗列表方法
+	 * @param moveChessToDeletegroup 拖拽到删除列表方法
+	 * @param model 数据类
 	 */
 	export class Hero extends eui.Panel {
 		private pointX: number;
 		private pointY: number;
-		public constructor(public heroInfo: GameHeroVO, public id: number, public heroStar: number, public model: GameModel, public moveChessToBattleGroup?: Function, public moveChessToNotBattleGroup?: Function) {
+		public constructor(public heroInfo: GameHeroVO, public id: number, public heroStar: number, public model: GameModel, public moveChessToBattleGroup?: Function, public moveChessToNotBattleGroup?: Function, public moveChessToDeletegroup?: Function) {
 			super();
 			this.skinName = "HeroBattle";
 		}
@@ -70,6 +73,15 @@ module game {
 			let notbattleGroupY: number = notBattleGroup.y;
 			let notbattleGroupWidth: number = notBattleGroup.width;
 			let notbattleGroupHeight: number = notBattleGroup.height;
+			let deletegroup: eui.Group = (<eui.Group>this.parent.parent['deletegroup']);
+			let deletegroupX: number = deletegroup.x;
+			let deletegroupY: number = deletegroup.y;
+			let deletegroupWidth: number = deletegroup.width;
+			let deletegroupHeight: number = deletegroup.height;
+			if (event.stageX >= deletegroupX && event.stageX <= (deletegroupX + deletegroupWidth) && event.stageY >= deletegroupY && event.stageY <= (deletegroupY + deletegroupHeight)) {
+				this.moveChessToDeletegroup(this.id, this.heroInfo.name);
+				return;
+			}
 
 			if (event.stageX >= battleGroupX && event.stageX <= (battleGroupX + battleGroupWidth) && event.stageY >= battleGroupY && event.stageY <= (battleGroupY + battleGroupHeight)) {
 				//扔到已上阵列表,移动格子

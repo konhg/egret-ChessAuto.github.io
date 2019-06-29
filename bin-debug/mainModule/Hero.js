@@ -14,14 +14,17 @@ var game;
      * 单个棋子实例
      * @author konhg
      * @description 实例化单个棋子，继承eui.Panel，可拖拽
-     * @param heroID 棋子数据, 唯一
+     * @param heroInfo 棋子数据
+     * @param id 棋子id, 唯一
      * @param heroStar 棋子的星级, 不唯一
      * @param moveChessToBattleGroup 拖拽到战斗列表方法
      * @param moveChessToNotBattleGroup 拖拽到未战斗列表方法
+     * @param moveChessToDeletegroup 拖拽到删除列表方法
+     * @param model 数据类
      */
     var Hero = (function (_super) {
         __extends(Hero, _super);
-        function Hero(heroInfo, id, heroStar, model, moveChessToBattleGroup, moveChessToNotBattleGroup) {
+        function Hero(heroInfo, id, heroStar, model, moveChessToBattleGroup, moveChessToNotBattleGroup, moveChessToDeletegroup) {
             var _this = _super.call(this) || this;
             _this.heroInfo = heroInfo;
             _this.id = id;
@@ -29,6 +32,7 @@ var game;
             _this.model = model;
             _this.moveChessToBattleGroup = moveChessToBattleGroup;
             _this.moveChessToNotBattleGroup = moveChessToNotBattleGroup;
+            _this.moveChessToDeletegroup = moveChessToDeletegroup;
             _this.skinName = "HeroBattle";
             return _this;
         }
@@ -87,6 +91,15 @@ var game;
             var notbattleGroupY = notBattleGroup.y;
             var notbattleGroupWidth = notBattleGroup.width;
             var notbattleGroupHeight = notBattleGroup.height;
+            var deletegroup = this.parent.parent['deletegroup'];
+            var deletegroupX = deletegroup.x;
+            var deletegroupY = deletegroup.y;
+            var deletegroupWidth = deletegroup.width;
+            var deletegroupHeight = deletegroup.height;
+            if (event.stageX >= deletegroupX && event.stageX <= (deletegroupX + deletegroupWidth) && event.stageY >= deletegroupY && event.stageY <= (deletegroupY + deletegroupHeight)) {
+                this.moveChessToDeletegroup(this.id, this.heroInfo.name);
+                return;
+            }
             if (event.stageX >= battleGroupX && event.stageX <= (battleGroupX + battleGroupWidth) && event.stageY >= battleGroupY && event.stageY <= (battleGroupY + battleGroupHeight)) {
                 //扔到已上阵列表,移动格子
                 var targetPoint = battleGroup.globalToLocal(event.stageX, event.stageY);

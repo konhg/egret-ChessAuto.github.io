@@ -41,7 +41,7 @@ function convertColor(str) {
     if (rgb) {
         // html = '<span style="border:1px solid #000;background-color:' + rgb + ';">&nbsp;&nbsp;</span><br>';
         // html += rgb + '<br>hex: ' + color.toString('hex') + '<br>' + color.toString('hsl');
-        return color.toString('hex')
+        return color.toString('hex');
     } else {
         return '不合法的颜色标识符';
     }

@@ -121,6 +121,32 @@ var game;
                 ],
             ];
         }
+        /**根据id删除棋子 */
+        GameModel.prototype.delChess = function (id) {
+            for (var i = 0; i < this.battleHeros.length; i++) {
+                for (var j = 4; j < this.battleHeros[i].length; j++) {
+                    if (!this.battleHeros[i][j] || null == this.battleHeros[i][j] || undefined == this.battleHeros[i][j]) {
+                        continue;
+                    }
+                    if (this.battleHeros[i][j].ChessExample.id == id) {
+                        this.battleHeros[i][j].ChessExample.removeThis();
+                        this.battleHeros[i][j] = null;
+                        return true;
+                    }
+                }
+            }
+            for (var j = 0; j < this.notBattleHeros.length; j++) {
+                if (!this.notBattleHeros[j] || null == this.notBattleHeros[j] || undefined == this.notBattleHeros[j]) {
+                    continue;
+                }
+                if (this.notBattleHeros[j].ChessExample.id == id) {
+                    this.notBattleHeros[j].ChessExample.removeThis();
+                    this.notBattleHeros[j] = null;
+                    return true;
+                }
+            }
+            return false;
+        };
         /**获取以上阵人数 */
         GameModel.prototype.getBattleChessNumber = function () {
             var num = 0;

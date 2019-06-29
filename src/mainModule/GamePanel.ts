@@ -23,7 +23,9 @@ module game {
 		 * @param txt 显示的文本
 		 */
 		private showPrompt(txt: string): void {
+
 			if (txt != '') {
+				txt += "\n"
 				this.isShowPrompt.push(txt);
 			}
 			if (this.isShowPrompt.length > 0 && this.isShowPromptbool == false) {
@@ -233,7 +235,7 @@ module game {
 				GameTools.showTips('购买失败,未上阵棋子已满', 1, true);
 				return;
 			}
-			this.showPrompt(`购买了${hinfo.ChessExample.heroInfo.name}\n`);
+			this.showPrompt(`购买了${hinfo.ChessExample.heroInfo.name}`);
 			GameTools.showTips('购买成功', 1);
 			this.model.currentShopHeros[index] = null;
 		}
@@ -262,7 +264,7 @@ module game {
 						dn.ChessExample.heroStar = arr.length > 2 ? 3 : 2;
 						dn.ChessExample.refresh();
 						GameTools.showTips(`成功将${dn.ChessExample.heroInfo.name}升至${dn.ChessExample.heroStar}星`, 1);
-						this.showPrompt(`${dn.ChessExample.heroInfo.name} 升至${dn.ChessExample.heroStar}星\n`);
+						this.showPrompt(`${dn.ChessExample.heroInfo.name} 升至${dn.ChessExample.heroStar}星`);
 					} else {
 						dn.ChessExample.removeThis();
 						this.model.notBattleHeros[dn.targetX] = null;
@@ -277,7 +279,7 @@ module game {
 						db.ChessExample.heroStar = arr.length > 2 ? 3 : 2;
 						db.ChessExample.refresh();
 						GameTools.showTips(`成功将${db.ChessExample.heroInfo.name}升至${db.ChessExample.heroStar}星`, 1);
-						this.showPrompt(`${db.ChessExample.heroInfo.name} 升至${db.ChessExample.heroStar}星\n`);
+						this.showPrompt(`${db.ChessExample.heroInfo.name} 升至${db.ChessExample.heroStar}星`);
 					} else {
 						let da: BattleHeroVO = this.model.findChessInNotBattleHerosById(data.id)
 						if (da != null) {
@@ -293,7 +295,7 @@ module game {
 		}
 		/**添加一个棋子到未上阵列显示容器 */
 		private addHeroToBattleGroup(heroInfo: GameHeroVO, id, star): Hero {
-			let h: Hero = new Hero(heroInfo, id, star, this.model, this.moveChessToBattleGroup.bind(this), this.moveChessToNotBattleGroup.bind(this));
+			let h: Hero = new Hero(heroInfo, id, star, this.model, this.moveChessToBattleGroup.bind(this), this.moveChessToNotBattleGroup.bind(this), this.moveChessToDeletegroup.bind(this));
 			h.name = id + '';
 			(<eui.Group>this['notbattlegroup']).addChild(h);
 			for (let i = 0; i < this.model.notBattleHeros.length; i++) {
@@ -304,6 +306,12 @@ module game {
 				}
 			}
 			return h;
+		}
+		/**移动棋子，移动到删除列表 */
+		private moveChessToDeletegroup(id: number, name: string): void {
+			if (this.model.delChess(id)) {
+				this.showPrompt(`成功删除 ${name} `);
+			}
 		}
 		/**移动棋子，移动到已上阵列表 */
 		private moveChessToBattleGroup(id, targetX, targetY, hX, hY, chess: Hero): void {
@@ -319,6 +327,7 @@ module game {
 			chess.y = hY;
 			this.model.moveBattleHerosToNotBattleHeros(id, targetX, targetY);
 		}
+
 	}
 
 }

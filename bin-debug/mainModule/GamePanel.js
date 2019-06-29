@@ -37,6 +37,7 @@ var game;
         GamePanel.prototype.showPrompt = function (txt) {
             var _this = this;
             if (txt != '') {
+                txt += "\n";
                 this.isShowPrompt.push(txt);
             }
             if (this.isShowPrompt.length > 0 && this.isShowPromptbool == false) {
@@ -242,7 +243,7 @@ var game;
                 game.GameTools.showTips('购买失败,未上阵棋子已满', 1, true);
                 return;
             }
-            this.showPrompt("\u8D2D\u4E70\u4E86" + hinfo.ChessExample.heroInfo.name + "\n");
+            this.showPrompt("\u8D2D\u4E70\u4E86" + hinfo.ChessExample.heroInfo.name);
             game.GameTools.showTips('购买成功', 1);
             this.model.currentShopHeros[index] = null;
         };
@@ -272,7 +273,7 @@ var game;
                         dn.ChessExample.heroStar = arr.length > 2 ? 3 : 2;
                         dn.ChessExample.refresh();
                         game.GameTools.showTips("\u6210\u529F\u5C06" + dn.ChessExample.heroInfo.name + "\u5347\u81F3" + dn.ChessExample.heroStar + "\u661F", 1);
-                        this.showPrompt(dn.ChessExample.heroInfo.name + " \u5347\u81F3" + dn.ChessExample.heroStar + "\u661F\n");
+                        this.showPrompt(dn.ChessExample.heroInfo.name + " \u5347\u81F3" + dn.ChessExample.heroStar + "\u661F");
                     }
                     else {
                         dn.ChessExample.removeThis();
@@ -289,7 +290,7 @@ var game;
                         db.ChessExample.heroStar = arr.length > 2 ? 3 : 2;
                         db.ChessExample.refresh();
                         game.GameTools.showTips("\u6210\u529F\u5C06" + db.ChessExample.heroInfo.name + "\u5347\u81F3" + db.ChessExample.heroStar + "\u661F", 1);
-                        this.showPrompt(db.ChessExample.heroInfo.name + " \u5347\u81F3" + db.ChessExample.heroStar + "\u661F\n");
+                        this.showPrompt(db.ChessExample.heroInfo.name + " \u5347\u81F3" + db.ChessExample.heroStar + "\u661F");
                     }
                     else {
                         var da = this.model.findChessInNotBattleHerosById(data.id);
@@ -307,7 +308,7 @@ var game;
         };
         /**添加一个棋子到未上阵列显示容器 */
         GamePanel.prototype.addHeroToBattleGroup = function (heroInfo, id, star) {
-            var h = new game.Hero(heroInfo, id, star, this.model, this.moveChessToBattleGroup.bind(this), this.moveChessToNotBattleGroup.bind(this));
+            var h = new game.Hero(heroInfo, id, star, this.model, this.moveChessToBattleGroup.bind(this), this.moveChessToNotBattleGroup.bind(this), this.moveChessToDeletegroup.bind(this));
             h.name = id + '';
             this['notbattlegroup'].addChild(h);
             for (var i = 0; i < this.model.notBattleHeros.length; i++) {
@@ -318,6 +319,12 @@ var game;
                 }
             }
             return h;
+        };
+        /**移动棋子，移动到删除列表 */
+        GamePanel.prototype.moveChessToDeletegroup = function (id, name) {
+            if (this.model.delChess(id)) {
+                this.showPrompt("\u6210\u529F\u5220\u9664 " + name + " ");
+            }
         };
         /**移动棋子，移动到已上阵列表 */
         GamePanel.prototype.moveChessToBattleGroup = function (id, targetX, targetY, hX, hY, chess) {

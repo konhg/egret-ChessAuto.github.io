@@ -132,6 +132,32 @@ module game {
 				],
 			];
 		}
+		/**根据id删除棋子 */
+		public delChess(id: number): boolean {
+			for (let i = 0; i < this.battleHeros.length; i++) {
+				for (let j = 4; j < this.battleHeros[i].length; j++) {
+					if (!this.battleHeros[i][j] || null == this.battleHeros[i][j] || undefined == this.battleHeros[i][j]) {
+						continue;
+					}
+					if (this.battleHeros[i][j].ChessExample.id == id) {
+						this.battleHeros[i][j].ChessExample.removeThis();
+						this.battleHeros[i][j] = null;
+						return true;
+					}
+				}
+			}
+			for (let j = 0; j < this.notBattleHeros.length; j++) {
+				if (!this.notBattleHeros[j] || null == this.notBattleHeros[j] || undefined == this.notBattleHeros[j]) {
+					continue;
+				}
+				if (this.notBattleHeros[j].ChessExample.id == id) {
+					this.notBattleHeros[j].ChessExample.removeThis();
+					this.notBattleHeros[j] = null;
+					return true;
+				}
+			}
+			return false;
+		}
 		/**获取以上阵人数 */
 		public getBattleChessNumber(): number {
 			let num: number = 0;
