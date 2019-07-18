@@ -24,6 +24,9 @@ module game {
 					(<eui.List>instance).itemRenderer = HeroShowItemRenderer;
 					(<eui.List>instance).dataProvider = new eui.ArrayCollection(this.model.currentShopHeros);
 					(<eui.List>instance).addEventListener(eui.ItemTapEvent.ITEM_TAP, (e: eui.ItemTapEvent) => {
+						// if ((<GameHeroVO>(<HeroShowItemRenderer>e.itemRenderer).data).cost > this.model.moneyNumber) {
+						// 	return;
+						// }
 						this.addHero(e.itemIndex, (<HeroShowItemRenderer>e.itemRenderer).delArr);
 						(<eui.List>e.currentTarget).dataProvider = new eui.ArrayCollection(this.model.currentShopHeros);
 					}, this);
@@ -51,7 +54,7 @@ module game {
 				case "lock":
 					(<eui.CheckBox>instance).currentState = this.model.isLockShop ? "upAndSelected" : 'up';
 					(<eui.CheckBox>instance).addEventListener(egret.TouchEvent.TOUCH_TAP, (e: egret.TouchEvent): void => {
-					(<eui.CheckBox>e.currentTarget).currentState = ((<eui.CheckBox>e.currentTarget).currentState == "upAndSelected" ? "up" : "upAndSelected");
+						(<eui.CheckBox>e.currentTarget).currentState = ((<eui.CheckBox>e.currentTarget).currentState == "upAndSelected" ? "up" : "upAndSelected");
 						this.model.isLockShop = (<eui.CheckBox>e.currentTarget).currentState == "upAndSelected";
 					}, this);
 					break;

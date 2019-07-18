@@ -40,6 +40,9 @@ var game;
                     instance.itemRenderer = game.HeroShowItemRenderer;
                     instance.dataProvider = new eui.ArrayCollection(this.model.currentShopHeros);
                     instance.addEventListener(eui.ItemTapEvent.ITEM_TAP, function (e) {
+                        // if ((<GameHeroVO>(<HeroShowItemRenderer>e.itemRenderer).data).cost > this.model.moneyNumber) {
+                        // 	return;
+                        // }
                         _this.addHero(e.itemIndex, e.itemRenderer.delArr);
                         e.currentTarget.dataProvider = new eui.ArrayCollection(_this.model.currentShopHeros);
                     }, this);

@@ -77,11 +77,11 @@ var game;
         function Global() {
         }
         /**游戏移动时间 */
-        Global.gameMoveTime = 15;
+        Global.gameMoveTime = 10;
         /**游戏移动等待时间 */
         Global.gameMoveWaitTime = 3;
         /**游戏战斗时间 */
-        Global.gameBattleTime = 20;
+        Global.gameBattleTime = 10;
         /**棋子的宽 */
         Global.chessWidth = 62.5;
         /**棋子的高 */

@@ -58,7 +58,7 @@ var game;
         GamePanel.prototype.timerFunc = function (e) {
             this['Countdown'].textFlow = new egret.HtmlTextParser().parser("<font color=0xff0000>" + this.countDownText + "</font><font color=0x00ffff>" + this.countDown + "</font>");
             this.countDown--;
-            this.refreshBattleArrayNumber();
+            this.refreshBattleArrayNumberAndHaveMoney();
             if (this.countDown < 0) {
                 switch (this.model.stateInNow) {
                     case -1 /* NONE */:
@@ -80,6 +80,9 @@ var game;
                 case 0 /* MOVETIME */:
                     this.countDown = game.Global.gameMoveTime;
                     this.model.stateInNow = 0 /* MOVETIME */;
+                    this.model.roundNumber++;
+                    this['roundnumber'].text = "当前回合数:" + this.model.roundNumber;
+                    this.model.changeMoney(0 /* PASSADD */, this.model.roundNumber != 1 ? 5 : 0);
                     this.countDownText = "准备阶段:";
                     if (this.model.isLockShop == false) {
                         this.model.currentShopHeros = game.Global.getHeros(this.model.level);
@@ -101,9 +104,10 @@ var game;
                     return;
             }
         };
-        /**刷新上阵人数 */
-        GamePanel.prototype.refreshBattleArrayNumber = function () {
+        /**刷新上阵人数和拥有的金币 */
+        GamePanel.prototype.refreshBattleArrayNumberAndHaveMoney = function () {
             this['BattleArray'].textFlow = new egret.HtmlTextParser().parser("<font color=0xff0000>\u5DF2\u4E0A\u9635\u4EBA\u6570:</font><font color=0x00ff00>" + this.model.getBattleChessNumber() + "</font><font color=0xff0000>/" + this.model.population + "</font>");
+            this['havemoney'].textFlow = new egret.HtmlTextParser().parser("<font color=0xff0000>\u91D1\u5E01:</font><font color=0x00ff00>" + this.model.moneyNumber + "</font>");
         };
         /**移除商店页面 */
         GamePanel.prototype.removeShopPanel = function () {
@@ -223,6 +227,15 @@ var game;
          * 购买成功失败的判断方法
          */
         GamePanel.prototype.addHero = function (index, delArr) {
+            if (this.model.currentShopHeros[index]) {
+                if (this.model.currentShopHeros[index].cost > this.model.moneyNumber) {
+                    game.GameTools.showTips('购买失败,金币不足', 1, true);
+                    return;
+                }
+                else {
+                    this.model.changeMoney(1 /* BUYREDUCE */, this.model.currentShopHeros[index].cost);
+                }
+            }
             if (delArr.length > 0) {
                 this.model.currentShopHeros[index] = null;
                 this.upDataChess(delArr);

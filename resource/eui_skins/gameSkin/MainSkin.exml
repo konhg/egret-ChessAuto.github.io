@@ -10,12 +10,15 @@
 	<e:Group id="shopgroup" width="100%" height="100%" touchEnabled="false" name="shopgroup" horizontalCenter="0" verticalCenter="0">
 	</e:Group>
 
-	<e:Label id="Countdown" text="" y="6" textColor="0xff0000" bold="true" fontFamily="SimHei" horizontalCenter="0"  locked="true"/>
+
 	<e:Scroller id="scroler" width="280" height="500" left="0" top="52" anchorOffsetX="0" anchorOffsetY="0" bounces="false" scrollPolicyH="off">
 		<e:Group>
 			<e:Label id="prompt" text="" textColor="0x43ff00" size="25" fontFamily="SimHei" stroke="1" verticalAlign="bottom" height="100%"/>
 		</e:Group>
 	</e:Scroller>
+	<e:Label id="Countdown" text="" textColor="0xff0000" bold="true" fontFamily="SimHei" horizontalCenter="0" top="0"/>
+	<e:Label id="roundnumber" text="" textColor="0xff0000" top="0" fontFamily="SimHei" left="0"/>
+	<e:Label id="havemoney" text="" anchorOffsetX="0" anchorOffsetY="0" right="0" top="152" fontFamily="SimHei"/>
 	<e:Label id="BattleArray" text="" size="30" fontFamily="SimHei" bold="true" left="0" bottom="0" textColor="0xff0000"/>
 	<e:Group id="deletegroup" width="250" height="228" y="262" anchorOffsetX="0" anchorOffsetY="0" right="0">
 		<e:Rect right="0" bottom="0" left="0" top="0"/>

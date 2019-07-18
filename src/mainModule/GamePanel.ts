@@ -46,7 +46,7 @@ module game {
 		private timerFunc(e: egret.TimerEvent): void {
 			(<eui.Label>this['Countdown']).textFlow = new egret.HtmlTextParser().parser(`<font color=0xff0000>${this.countDownText}</font><font color=0x00ffff>${this.countDown}</font>`);
 			this.countDown--;
-			this.refreshBattleArrayNumber();
+			this.refreshBattleArrayNumberAndHaveMoney();
 			if (this.countDown < 0) {
 				switch (this.model.stateInNow) {
 					case GAMESTATE.NONE:
@@ -69,6 +69,9 @@ module game {
 				case GAMESTATE.MOVETIME:
 					this.countDown = Global.gameMoveTime;
 					this.model.stateInNow = GAMESTATE.MOVETIME;
+					this.model.roundNumber++;
+					(<eui.Label>this['roundnumber']).text = "当前回合数:" + this.model.roundNumber;
+					this.model.changeMoney(MONEYSTATE.PASSADD, this.model.roundNumber != 1 ? 5 : 0);
 					this.countDownText = "准备阶段:";
 					if (this.model.isLockShop == false) {
 						this.model.currentShopHeros = Global.getHeros(this.model.level);
@@ -92,9 +95,11 @@ module game {
 
 			}
 		}
-		/**刷新上阵人数 */
-		private refreshBattleArrayNumber(): void {
-			(<eui.Label>this['BattleArray']).textFlow = new egret.HtmlTextParser().parser(`<font color=0xff0000>已上阵人数:</font><font color=0x00ff00>${this.model.getBattleChessNumber()}</font><font color=0xff0000>/${this.model.population}</font>`)
+		/**刷新上阵人数和拥有的金币 */
+		private refreshBattleArrayNumberAndHaveMoney(): void {
+			(<eui.Label>this['BattleArray']).textFlow = new egret.HtmlTextParser().parser(`<font color=0xff0000>已上阵人数:</font><font color=0x00ff00>${this.model.getBattleChessNumber()}</font><font color=0xff0000>/${this.model.population}</font>`);
+			(<eui.Label>this['havemoney']).textFlow = new egret.HtmlTextParser().parser(`<font color=0xff0000>金币:</font><font color=0x00ff00>${this.model.moneyNumber}</font>`);
+
 		}
 		/**移除商店页面 */
 		private removeShopPanel(): void {
@@ -214,7 +219,14 @@ module game {
 		 * 购买成功失败的判断方法
 		 */
 		private addHero(index: number, delArr: uplevelObj[]): void {
-
+			if (this.model.currentShopHeros[index]) {
+				if (this.model.currentShopHeros[index].cost > this.model.moneyNumber) {
+					GameTools.showTips('购买失败,金币不足', 1, true);
+					return;
+				} else {
+					this.model.changeMoney(MONEYSTATE.BUYREDUCE, this.model.currentShopHeros[index].cost)
+				}
+			}
 			if (delArr.length > 0) {
 				this.model.currentShopHeros[index] = null;
 				this.upDataChess(delArr);
@@ -309,7 +321,7 @@ module game {
 		}
 		/**移动棋子，移动到删除列表 */
 		private moveChessToDeletegroup(id: number, name: string): void {
-			if (this.model.delChess(id)) {
+			if (this.model.delChess(id) != null) {
 				this.showPrompt(`成功删除 ${name} `);
 			}
 		}

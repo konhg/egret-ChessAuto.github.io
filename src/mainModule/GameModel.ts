@@ -1,5 +1,5 @@
 module game {
-	/**状态枚举 */
+	/**时间状态枚举 */
 	export const enum GAMESTATE {
 		/**无状态 */
 		NONE = -1,
@@ -12,6 +12,17 @@ module game {
 		/** */
 
 	}
+	/**金币状态枚举 */
+	export const enum MONEYSTATE {
+		/**回合增加金币 */
+		PASSADD = 0,
+		/**购买扣除金币 */
+		BUYREDUCE = 1,
+		/**回收增加金币 */
+		REMOVEADD = 2,
+		/**刷新商店扣除金币 */
+		REFRESHSHOPREDUCE = 3,
+	}
 	export class GameModel {
 		/**当前状态 */
 		public stateInNow: number;
@@ -20,9 +31,13 @@ module game {
 		/**是否锁定商店 */
 		public isLockShop = false;
 		/**当前棋盘等级 */
-		public level: number = 10;
+		public level: number = 1;
 		/**允许上阵的最大人数 */
 		public population: number = 100;
+		/**金币数量 */
+		public moneyNumber: number = 1;
+		/**回合数 */
+		public roundNumber: number = 0;
 		/**未上阵棋子列表 */
 		public notBattleHeros: BattleHeroVO[] = [];
 		/**已上阵棋子列表 */
@@ -132,17 +147,40 @@ module game {
 				],
 			];
 		}
+		/**改变当前金币 */
+		public changeMoney(type: number, price: number = 0): void {
+			let num: number = 0;
+			switch (type) {
+				case MONEYSTATE.PASSADD:
+					num = Math.floor(this.moneyNumber * 0.1);
+					num = num > 5 ? 5 : num;
+					num += price;
+					break;
+				case MONEYSTATE.BUYREDUCE:
+					num = -price;
+					break;
+				case MONEYSTATE.REMOVEADD:
+					break;
+				case MONEYSTATE.REFRESHSHOPREDUCE:
+					break;
+			}
+			this.moneyNumber += num;
+		}
 		/**根据id删除棋子 */
-		public delChess(id: number): boolean {
+		public delChess(id: number): number {
+			let money: number = 0;
 			for (let i = 0; i < this.battleHeros.length; i++) {
 				for (let j = 4; j < this.battleHeros[i].length; j++) {
 					if (!this.battleHeros[i][j] || null == this.battleHeros[i][j] || undefined == this.battleHeros[i][j]) {
 						continue;
 					}
+
 					if (this.battleHeros[i][j].ChessExample.id == id) {
+						let d: Hero = this.battleHeros[i][j].ChessExample;
+						// d.heroInfo.cost * ((d.heroStar - 1) * 3)
 						this.battleHeros[i][j].ChessExample.removeThis();
 						this.battleHeros[i][j] = null;
-						return true;
+						return 0;
 					}
 				}
 			}
@@ -153,10 +191,10 @@ module game {
 				if (this.notBattleHeros[j].ChessExample.id == id) {
 					this.notBattleHeros[j].ChessExample.removeThis();
 					this.notBattleHeros[j] = null;
-					return true;
+					return 0;
 				}
 			}
-			return false;
+			return null;
 		}
 		/**获取以上阵人数 */
 		public getBattleChessNumber(): number {

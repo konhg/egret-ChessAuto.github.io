@@ -12,17 +12,17 @@
 	],
 	"game": [
 		"bin-debug/mainModule/GameModel.js",
-		"bin-debug/AssetAdapter.js",
+		"bin-debug/mainModule/TipsUtils.js",
 		"bin-debug/Main.js",
 		"bin-debug/Platform.js",
 		"bin-debug/ThemeAdapter.js",
 		"bin-debug/mainModule/GameController.js",
-		"bin-debug/LoadingUI.js",
+		"bin-debug/AssetAdapter.js",
 		"bin-debug/mainModule/GamePanel.js",
 		"bin-debug/mainModule/GameTools.js",
 		"bin-debug/mainModule/Hero.js",
 		"bin-debug/mainModule/HeroShowItemRenderer.js",
 		"bin-debug/mainModule/ShopPanel.js",
-		"bin-debug/mainModule/TipsUtils.js"
+		"bin-debug/LoadingUI.js"
 	]
 }

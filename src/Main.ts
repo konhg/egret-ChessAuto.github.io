@@ -31,11 +31,11 @@ module game {
         /**显示层级 */
         static gameController: eui.UILayer;
         /**游戏移动时间 */
-        static readonly gameMoveTime = 15;
+        static readonly gameMoveTime = 10;
         /**游戏移动等待时间 */
         static readonly gameMoveWaitTime = 3;
         /**游戏战斗时间 */
-        static readonly gameBattleTime = 20;
+        static readonly gameBattleTime = 10;
         /**棋子的宽 */
         static readonly chessWidth: number = 62.5;
         /**棋子的高 */

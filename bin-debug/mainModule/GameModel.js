@@ -10,9 +10,13 @@ var game;
             /**是否锁定商店 */
             this.isLockShop = false;
             /**当前棋盘等级 */
-            this.level = 10;
+            this.level = 1;
             /**允许上阵的最大人数 */
             this.population = 100;
+            /**金币数量 */
+            this.moneyNumber = 1;
+            /**回合数 */
+            this.roundNumber = 0;
             /**未上阵棋子列表 */
             this.notBattleHeros = [];
             /**已上阵棋子列表 */
@@ -121,6 +125,26 @@ var game;
                 ],
             ];
         }
+        /**改变当前金币 */
+        GameModel.prototype.changeMoney = function (type, price) {
+            if (price === void 0) { price = 0; }
+            var num = 0;
+            switch (type) {
+                case 0 /* PASSADD */:
+                    num = Math.floor(this.moneyNumber * 0.1);
+                    num = num > 5 ? 5 : num;
+                    num += price;
+                    break;
+                case 1 /* BUYREDUCE */:
+                    num = -price;
+                    break;
+                case 2 /* REMOVEADD */:
+                    break;
+                case 3 /* REFRESHSHOPREDUCE */:
+                    break;
+            }
+            this.moneyNumber += num;
+        };
         /**根据id删除棋子 */
         GameModel.prototype.delChess = function (id) {
             for (var i = 0; i < this.battleHeros.length; i++) {
